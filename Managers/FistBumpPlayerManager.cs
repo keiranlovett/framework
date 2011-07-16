@@ -12,7 +12,7 @@ public class FistBumpPlayerManager : MonoBehaviour
 {
     #region Private Fields
 
-    private List<FistBumpPlayer> m_Players;
+    private List<FistBumpPlayer> m_Players = new List<FistBumpPlayer>();
 
     #endregion
 
@@ -21,35 +21,6 @@ public class FistBumpPlayerManager : MonoBehaviour
     public List<FistBumpPlayer> Players
     {
         get { return m_Players; }
-    }
-
-    #endregion
-
-    #region Implementation of MonoBehaviour
-
-    
-    /// <summary>
-    /// Awake is called when the script instance is being loaded.
-    /// </summary>
-    void Awake()
-    {
-        m_Players = new List<FistBumpPlayer>();
-    }
-
-    /// <summary>
-    /// Start is called just before any of the Update methods is called the first time.
-    /// </summary>
-    void Start()
-    {
-
-    }
-
-    /// <summary>
-    /// Update is called every frame, if the MonoBehaviour is enabled.
-    /// </summary>
-    void Update()
-    {
-        // Update is called once per frame
     }
 
     #endregion
