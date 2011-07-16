@@ -95,7 +95,7 @@ public abstract class FistBumpGame : MonoBehaviour
     }
     
 
-    private static void InitializeGameServices()
+    private void InitializeGameServices()
     {
         if (Application.isWebPlayer)
         {
@@ -103,7 +103,8 @@ public abstract class FistBumpGame : MonoBehaviour
             // try initialization
 
             // Kongregate
-            Application.ExternalEval("if(typeof(kongregateUnitySupport) != 'undefined') { kongregateUnitySupport.initAPI('MyUnityObject', 'OnKongregateAPILoaded'); };");
+            m_GameService = GetComponent<KongregateGameService>() ?? gameObject.AddComponent<KongregateGameService>();
+            m_GameService.Initialize();
 
         }
         else if (Application.platform == RuntimePlatform.IPhonePlayer || Application.platform == RuntimePlatform.Android)
@@ -131,22 +132,7 @@ public abstract class FistBumpGame : MonoBehaviour
     #endregion
 
     #region GameServices methods
-// ReSharper disable UnusedMember.Global
-    public void OnKongregateAPILoaded(string userInfo)
-    {
-// ReSharper restore UnusedMember.Global
-        // We now know we're on Kongregate
-        //TODO: Set service to be Kongregate
-        m_GameService = new KongregateGameService();
 
-        // Split the user info up into tokens
-        //string[] param = userInfo.Split("|"[0]);
-        //int userId = int.Parse(param[0]);
-        //string username = param[1];
-        //string gameAuthToken = param[2];
-
-        m_GameService.Initialize();
-    }
     #endregion
 }
 

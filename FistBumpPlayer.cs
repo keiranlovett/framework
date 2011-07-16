@@ -18,6 +18,7 @@ public class FistBumpPlayer
     private NetworkPlayer m_NetworkPlayer;
     private readonly PlayerMetadata m_Metadata = new PlayerMetadata();
     private FistBumpControlScheme m_ControlScheme = new FistBumpControlScheme(InputDevices.Keyboard, "Arrows", 0.001f);
+
     #endregion
 
     #region Public Properties

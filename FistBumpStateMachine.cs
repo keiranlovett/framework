@@ -8,6 +8,8 @@ public class FistBumpStateMachine
 {
     List<FistBumpState> m_states;
     FistBumpState m_prevState;
-    public void Update();
+    public void Update()
+    {
+    }
 }
 

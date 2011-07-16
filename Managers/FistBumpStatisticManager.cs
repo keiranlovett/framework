@@ -1,4 +1,6 @@
 ﻿#region Using statements
+
+using System.Collections.Generic;
 using UnityEngine;
 #endregion
 
@@ -9,6 +11,8 @@ using UnityEngine;
 public class FistBumpStatisticManager : MonoBehaviour
 {
     #region Private Fields
+
+    private List<FistBumpStatistic> m_Statistics = new List<FistBumpStatistic>();
 
     #endregion
 
