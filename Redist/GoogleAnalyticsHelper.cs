@@ -28,14 +28,14 @@ using System.Collections;
 
 public static class GoogleAnalyticsHelper
 {
-	private static string accountid;
-	private static string domain;
+	private static string s_Accountid;
+	private static string s_Domain;
 	
 	/// Init class with given site id and domain name
-	public static void Settings(string p_accountid, string p_domain)
+	public static void Initialize(string p_accountid, string p_domain)
 	{
-		domain = p_domain;
-		accountid = p_accountid;
+		s_Domain = p_domain;
+		s_Accountid = p_accountid;
 	}
 
 
@@ -50,7 +50,7 @@ public static class GoogleAnalyticsHelper
 	private static Hashtable requestParams = new Hashtable();
 	public static void LogEvent(string page, string category, string action, string opt_label, int opt_value)
 	{
-		if (domain.Length == 0)
+		if (s_Domain.Length == 0)
 		{
 			Debug.Log("GoogleAnalytics settings not set!");
 			return;
@@ -76,7 +76,7 @@ public static class GoogleAnalyticsHelper
 		requestParams.Clear();
 		requestParams.Add("utmwv", "4.6.5");			
 		requestParams.Add("utmn", utRandom.ToString());	
-		requestParams.Add("utmhn", WWW.EscapeURL(domain));
+		requestParams.Add("utmhn", WWW.EscapeURL(s_Domain));
 		requestParams.Add("utmcs", "ISO-8859-1");
 		requestParams.Add("utmsr", Screen.currentResolution.width.ToString() + "x" + Screen.currentResolution.height.ToString());	
 		
@@ -88,7 +88,7 @@ public static class GoogleAnalyticsHelper
 		requestParams.Add("utmhid", utRandom.ToString());				
 		requestParams.Add("utmr", "-");				
 		requestParams.Add("utmp", page);	
-		requestParams.Add("utmac", accountid);		
+		requestParams.Add("utmac", s_Accountid);		
 		requestParams.Add("utmcc", "__utma" + encoded_equals +_utma + "__utmz" + encoded_equals + _utmz );
 		
 		
@@ -124,7 +124,7 @@ public static class GoogleAnalyticsHelper
 		Debug.Log("[Google URL]" + url);		
 		
 		/// Execute query:
-		WWW w = new WWW(url);
+		new WWW(url);
 	}
 
 	private static long GetEpochTime()
