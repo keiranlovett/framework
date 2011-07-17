@@ -12,6 +12,8 @@ public abstract class FistBumpGame : MonoBehaviour
 {
     #region Private Variables
 
+    public static string Version { get { return "0.1.0 Alpha"; } }
+
     protected static FistBumpGame s_Instance;
     private FistBumpGameService m_GameService;
     private FistBumpGameManager m_GameManager;
