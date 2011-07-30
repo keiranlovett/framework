@@ -2,14 +2,8 @@
 
 using System.Collections.Generic;
 using UnityEngine;
-using System.Security.Cryptography;
-using System.Text;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
-
-using System;
 using System.Runtime.Serialization;
-using System.Reflection;
+
 #endregion
 
 /// <summary>

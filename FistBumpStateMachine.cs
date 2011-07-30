@@ -1,13 +1,14 @@
-﻿using System;
+﻿#region Using statements
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
+
+#endregion
 
 public class FistBumpStateMachine
 {
-    List<FistBumpState> m_states;
-    FistBumpState m_prevState;
+    List<FistBumpState> m_States;
+    FistBumpState m_PrevState;
+    FistBumpState m_CurrState;
     public void Update()
     {
     }

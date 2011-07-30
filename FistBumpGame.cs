@@ -1,5 +1,7 @@
-﻿#region Usings
+﻿#region Using statements
+
 using UnityEngine;
+
 #endregion
 
 [RequireComponent(typeof(FistBumpGameManager))]

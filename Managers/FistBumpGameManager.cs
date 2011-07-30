@@ -1,5 +1,7 @@
 ﻿#region Using statements
+
 using UnityEngine;
+
 #endregion
 
 /// <summary>
