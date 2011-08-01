@@ -78,7 +78,7 @@ public static class FistBumpIO
 
     public static void Write<T>(string filename, T data)
     {
-        if (s_EncryptFiles && s_EncryptionKey == "12345") Debug.LogWarning("[IO] WARNING: Encrypting file with default, publicly known key");
+        if (s_EncryptFiles && s_EncryptionKey == "12345678") Debug.LogWarning("[IO] WARNING: Encrypting file with default, publicly known key");
 
         FileStream writeStream = null;
         try
