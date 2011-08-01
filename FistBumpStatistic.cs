@@ -25,32 +25,42 @@ public class FistBumpStatistic : ISerializable
 
     #region Private Fields
 
-    private bool m_FirstUse = true;
-    private string m_Name = "";
-    private StatisticType m_Type = StatisticType.Add;
+    private readonly int m_Name = 0;
+    private readonly StatisticType m_Type = StatisticType.Add;
     private int m_CurrentValue = 0;
 
     #endregion
 
     #region Public Fields
 
-    public bool             HasBeenUsed     { get { return !m_FirstUse; } }
-    public string           Name            { get { return m_Name; } }
+    public bool             HasBeenUsed     { get { return (m_Type == StatisticType.Min ? m_CurrentValue != int.MaxValue : m_CurrentValue != 0); } }
+    public int              Name            { get { return m_Name; } }
     public StatisticType    Type            { get { return m_Type; } }
     public int              Value           { get { return m_CurrentValue; } }
 
     #endregion
 
     #region Ctor
-    public FistBumpStatistic(string name, StatisticType type)
+
+    public FistBumpStatistic(int name, StatisticType type)
     {
         m_Name = name;
         m_Type = type;
+        if (type == StatisticType.Min)
+            m_CurrentValue = int.MaxValue;
     }
+
+    public FistBumpStatistic(SerializationInfo info, StreamingContext ctxt)
+    {
+        m_Name = (int)info.GetValue("name", typeof(int));
+        m_Type = (StatisticType)info.GetValue("type", typeof(StatisticType));
+        m_CurrentValue = (int)info.GetValue("currentvalue", typeof(int));
+    }
+
     #endregion
 
     #region Public Methods
-
+    
     public void Submit(int value)
     {
         switch(m_Type)
@@ -60,47 +70,38 @@ public class FistBumpStatistic : ISerializable
                 m_CurrentValue += value;
                 break;
             case StatisticType.Min:
-                if (value < m_CurrentValue || m_FirstUse)
+                if (value < m_CurrentValue)
                 {
-                    Debug.Log(string.Format("[Stats] {0} - New Min - {1}New={2}", m_Name, (!m_FirstUse ? string.Format("Old={0} ", m_CurrentValue) : ""), value));
+                    Debug.Log(string.Format("[Stats] {0} - New Min - {1}New={2}", m_Name, (HasBeenUsed ? string.Format("Old={0} ", m_CurrentValue) : ""), value));
                     m_CurrentValue = value;
                 }
                 break;
             case StatisticType.Max:
-                if (value > m_CurrentValue || m_FirstUse)
+                if (value > m_CurrentValue)
                 {
-                    Debug.Log(string.Format("[Stats] {0} - New Max - {1}New={2}", m_Name, (!m_FirstUse ? string.Format("Old={0} ", m_CurrentValue) : ""), value));
+                    Debug.Log(string.Format("[Stats] {0} - New Max - {1}New={2}", m_Name, (HasBeenUsed ? string.Format("Old={0} ", m_CurrentValue) : ""), value));
                     m_CurrentValue = value;
                 }
                 break;
             case StatisticType.Replace:
-                Debug.Log(string.Format("[Stats] {0} - New Value - {1}New={2}", m_Name, (!m_FirstUse ? string.Format("Old={0} ", m_CurrentValue) : ""), value));
+                Debug.Log(string.Format("[Stats] {0} - New Value - {1}New={2}", m_Name, (HasBeenUsed ? string.Format("Old={0} ", m_CurrentValue) : ""), value));
                 m_CurrentValue = value;
                 break;
         }
-
-        m_FirstUse = false;
     }
 
     #endregion
 
-    public FistBumpStatistic(SerializationInfo info, StreamingContext ctxt)
-    {
-        m_FirstUse = (bool)info.GetValue("firstuse", typeof(bool)); ;
-        m_Name = (string)info.GetValue("name", typeof(string)); ;
-        m_Type = (StatisticType)info.GetValue("type", typeof(StatisticType)); ;
-        m_CurrentValue = (int)info.GetValue("currentvalue", typeof(int));
-    }
+    #region Implementation of ISerializable
 
-    //Serialization function.
-
-    public void GetObjectData(SerializationInfo info, StreamingContext ctxt)
+    public void GetObjectData(SerializationInfo info, StreamingContext context)
     {
-        info.AddValue("firstuse", m_FirstUse); ;
-        info.AddValue("name", m_Name); ;
-        info.AddValue("type", m_Type); ;
+        info.AddValue("name", m_Name);
+        info.AddValue("type", m_Type);
         info.AddValue("currentvalue", m_CurrentValue);
     }
+
+    #endregion
 }
 
 public partial class StatisticName

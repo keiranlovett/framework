@@ -20,37 +20,34 @@ public class FistBumpStatisticManager : MonoBehaviour
 
     #region Public Methods
 
-    public void Submit(string name, int value)
+    public void Submit(int statName, int statValue)
     {
-        FistBumpStatistic stat = m_Statistics.Find(s => s.Name == name);
+        FistBumpStatistic stat = m_Statistics.Find(s => s.Name == statName);
         if (stat != null)
-            stat.Submit(value);
-    }
-
-    public void Serialize(SerializationInfo info)
-    {
-        m_Statistics = (List<FistBumpStatistic>)info.GetValue("stats", typeof(List<FistBumpStatistic>));
+            stat.Submit(statValue);
     }
 
     public void Deserialize(SerializationInfo info)
     {
+        m_Statistics = (List<FistBumpStatistic>)info.GetValue("stats", typeof(List<FistBumpStatistic>));
+    }
+
+    public void Serialize(SerializationInfo info)
+    {
         info.AddValue("stats", m_Statistics);
     }
 
-    public void Add(string name, FistBumpStatistic.StatisticType type)
+    public void Add(int statName, FistBumpStatistic.StatisticType type)
     {
-        m_Statistics.Add(new FistBumpStatistic(name, type));
+        if (m_Statistics.Find(s => s.Name == statName) == null)
+            m_Statistics.Add(new FistBumpStatistic(statName, type));
     }
 
     #endregion
 
     #region Implementation of MonoBehaviour
-    /// <summary>
-    /// Awake is called when the script instance is being loaded.
-    /// </summary>
-    public void Awake()
-    {
-        m_Statistics = new List<FistBumpStatistic>();
-    }
+    
+
+
     #endregion
 }
