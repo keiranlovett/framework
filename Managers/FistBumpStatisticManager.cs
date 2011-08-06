@@ -25,14 +25,17 @@ public class FistBumpStatisticManager : MonoBehaviour
     private class FistBumpStatisticDefinition
     {
         private readonly int m_Name = 0;
+        private readonly string m_Description = "";
         private readonly StatisticType m_Type = StatisticType.Add;
 
-        public int Name { get { return m_Name; } }
-        public StatisticType Type { get { return m_Type; } }
+        public int Name             { get { return m_Name; } }
+        public string Description   { get { return m_Description; } }
+        public StatisticType Type   { get { return m_Type; } }
 
-        public FistBumpStatisticDefinition(int name, StatisticType type)
+        public FistBumpStatisticDefinition(int name, string description, StatisticType type)
         {
             m_Name = name;
+            m_Description = description;
             m_Type = type;
         }
     }
@@ -65,25 +68,25 @@ public class FistBumpStatisticManager : MonoBehaviour
         switch (statDef.Type)
         {
             case StatisticType.Add:
-                Debug.Log(string.Format("[Stats] {0} - New Total - Old={1} New={2}", stat.Name, stat.Value, stat.Value + statValue));
+                Debug.Log(string.Format("[Stats] {0} - New Total - Old={1} New={2}", statDef.Description, stat.Value, stat.Value + statValue));
                 stat.Value += statValue;
                 break;
             case StatisticType.Min:
                 if (statValue < stat.Value)
                 {
-                    Debug.Log(string.Format("[Stats] {0} - New Min - {1}New={2}", stat.Name, (!newStat ? string.Format("Old={0} ", stat.Value) : ""), statValue));
+                    Debug.Log(string.Format("[Stats] {0} - New Min - {1}New={2}", statDef.Description, (!newStat ? string.Format("Old={0} ", stat.Value) : ""), statValue));
                     stat.Value = statValue;
                 }
                 break;
             case StatisticType.Max:
                 if (statValue > stat.Value)
                 {
-                    Debug.Log(string.Format("[Stats] {0} - New Max - {1}New={2}", stat.Name, (!newStat ? string.Format("Old={0} ", stat.Value) : ""), statValue));
+                    Debug.Log(string.Format("[Stats] {0} - New Max - {1}New={2}", statDef.Description, (!newStat ? string.Format("Old={0} ", stat.Value) : ""), statValue));
                     stat.Value = statValue;
                 }
                 break;
             case StatisticType.Replace:
-                Debug.Log(string.Format("[Stats] {0} - New Value - {1}New={2}", stat.Name, (!newStat ? string.Format("Old={0} ", stat.Value) : ""), statValue));
+                Debug.Log(string.Format("[Stats] {0} - New Value - {1}New={2}", statDef.Description, (!newStat ? string.Format("Old={0} ", stat.Value) : ""), statValue));
                 stat.Value = statValue;
                 break;
         }
@@ -99,10 +102,10 @@ public class FistBumpStatisticManager : MonoBehaviour
         info.AddValue("stats", m_Statistics);
     }
 
-    public void Add(int statName, StatisticType type)
+    public void Add(int statName, string description, StatisticType type)
     {
         if (m_StatisticsDefinitions.Find(s => s.Name == statName) == null)
-            m_StatisticsDefinitions.Add(new FistBumpStatisticDefinition(statName, type));
+            m_StatisticsDefinitions.Add(new FistBumpStatisticDefinition(statName, description, type));
     }
 
     #endregion

@@ -76,11 +76,18 @@ public abstract class FistBumpGame : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
     
+    protected void OnGUI()
+    {
+        GUIContent versionText = new GUIContent( Version );
+        GUI.Label(new Rect(0,0,160, 150), versionText);
+    }
+    
     /// <summary>
     /// Sent to all game objects before the application is quit.
     /// </summary>
     protected void OnApplicationQuit()
     {
+        Debug.Log("Session play time: " + Time.time);
         s_Instance = null;
     }
     
