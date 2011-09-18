@@ -75,6 +75,16 @@ public abstract class FistBumpGame : MonoBehaviour
         //Make this game object persistant
         DontDestroyOnLoad(gameObject);
     }
+
+    protected void Start()
+    {
+
+    }
+
+    protected void Update()
+    {
+
+    }
     
     protected void OnGUI()
     {
