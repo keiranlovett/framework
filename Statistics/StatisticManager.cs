@@ -22,6 +22,11 @@ namespace FistBump.Framework
 	    #endregion
 	
 	    #region Public Methods
+
+        public void Submit(string statName, int statValue)
+        {
+            Submit((int) CRC32.Calculate(statName), statValue);
+        }
 	
 	    public void Submit(int statName, int statValue)
 	    {
@@ -75,8 +80,13 @@ namespace FistBump.Framework
 	    {
 	        info.AddValue("stats", m_Statistics);
 	    }
+
+        public void AddDefinition(string statName, string description, StatisticType type)
+        {
+            AddDefinition((int) CRC32.Calculate(statName), description, type);
+        }
 	
-	    public void Add(int statName, string description, StatisticType type)
+	    public void AddDefinition(int statName, string description, StatisticType type)
 	    {
 	        if (m_StatisticsDefinitions.Find(s => s.Name == statName) == null)
 	            m_StatisticsDefinitions.Add(new StatisticDefinition(statName, description, type));
