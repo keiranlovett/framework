@@ -14,37 +14,9 @@ namespace FistBump.Framework
 	/// <remarks>FistBump.ca - Copyright (C)</remarks>
 	public class StatisticManager : MonoBehaviour
 	{
-	    #region Enums
-	    public enum StatisticType
-	    {
-	        Min,
-	        Max,
-	        Add,
-	        Replace
-	    }
-	    #endregion
-	
-	    private class StatisticDefinition
-	    {
-	        private readonly int m_Name = 0;
-	        private readonly string m_Description = "";
-	        private readonly StatisticType m_Type = StatisticType.Add;
-	
-	        public int Name             { get { return m_Name; } }
-	        public string Description   { get { return m_Description; } }
-	        public StatisticType Type   { get { return m_Type; } }
-	
-	        public StatisticDefinition(int name, string description, StatisticType type)
-	        {
-	            m_Name = name;
-	            m_Description = description;
-	            m_Type = type;
-	        }
-	    }
-	
 	    #region Private Fields
 	
-	    private List<FistBumpStatistic> m_Statistics = new List<FistBumpStatistic>();
+	    private List<Statistic> m_Statistics = new List<Statistic>();
 	    private readonly List<StatisticDefinition> m_StatisticsDefinitions = new List<StatisticDefinition>();
 	
 	    #endregion
@@ -54,7 +26,7 @@ namespace FistBump.Framework
 	    public void Submit(int statName, int statValue)
 	    {
 	        StatisticDefinition statDef = m_StatisticsDefinitions.Find(s => s.Name == statName);
-	        FistBumpStatistic stat = m_Statistics.Find(s => s.Name == statName);
+	        Statistic stat = m_Statistics.Find(s => s.Name == statName);
 	        if (statDef == null)
 	        {
 	            Debug.LogWarning(string.Format("[Stats] Stat definition {0} does not exist, you must add the stat before submitting it", statName));
@@ -64,7 +36,7 @@ namespace FistBump.Framework
 	        bool newStat = stat == null;
 	        if (newStat)
 	        {
-	            stat = new FistBumpStatistic(statName, statDef.Type);
+	            stat = new Statistic(statName, statDef.Type);
 	            m_Statistics.Add(stat);
 	        }
 	        switch (statDef.Type)
@@ -96,7 +68,7 @@ namespace FistBump.Framework
 	
 	    public void Deserialize(SerializationInfo info)
 	    {
-	        m_Statistics = (List<FistBumpStatistic>)info.GetValue("stats", typeof(List<FistBumpStatistic>));
+	        m_Statistics = (List<Statistic>)info.GetValue("stats", typeof(List<Statistic>));
 	    }
 	
 	    public void Serialize(SerializationInfo info)
@@ -117,10 +89,5 @@ namespace FistBump.Framework
 	
 	
 	    #endregion
-	}
-	
-	public partial class StatisticName
-	{
-	
 	}
 }

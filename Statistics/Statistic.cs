@@ -13,7 +13,7 @@ namespace FistBump.Framework
     /// </summary>
     /// <remarks>FistBump.ca - Copyright (C)</remarks>
     [Serializable]
-    public class FistBumpStatistic : ISerializable
+    public class Statistic : ISerializable
     {
         #region Constants
 
@@ -38,14 +38,14 @@ namespace FistBump.Framework
 
         #region Ctor
 
-        public FistBumpStatistic(int name, StatisticManager.StatisticType type)
+        public Statistic(int name, StatisticType type)
         {
             m_Name = name;
-            if (type == StatisticManager.StatisticType.Min)
+            if (type == StatisticType.Min)
                 m_CurrentValue = int.MaxValue;
         }
 
-        public FistBumpStatistic(SerializationInfo info, StreamingContext ctxt)
+        public Statistic(SerializationInfo info, StreamingContext ctxt)
         {
             m_Name = (int)info.GetValue(KEY_NAME, typeof(int));
             m_CurrentValue = (int)info.GetValue(KEY_VALUE, typeof(int));
