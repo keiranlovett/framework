@@ -10,9 +10,16 @@ using System.Runtime.Serialization;
 /// 
 /// </summary>
 /// <remarks>FistBump.ca - Copyright (C)</remarks>
-[Serializable()]
+[Serializable]
 public class FistBumpStatistic : ISerializable
 {
+    #region Constants
+
+    private const String KEY_NAME = "id";
+    private const String KEY_VALUE = "v";
+
+    #endregion
+
     #region Private Fields
 
     private readonly int m_Name = 0;
@@ -38,8 +45,8 @@ public class FistBumpStatistic : ISerializable
 
     public FistBumpStatistic(SerializationInfo info, StreamingContext ctxt)
     {
-        m_Name = (int)info.GetValue("name", typeof(int));
-        m_CurrentValue = (int)info.GetValue("currentvalue", typeof(int));
+        m_Name = (int)info.GetValue(KEY_NAME, typeof(int));
+        m_CurrentValue = (int)info.GetValue(KEY_VALUE, typeof(int));
     }
 
     #endregion
@@ -52,8 +59,8 @@ public class FistBumpStatistic : ISerializable
 
     public void GetObjectData(SerializationInfo info, StreamingContext context)
     {
-        info.AddValue("name", m_Name);
-        info.AddValue("currentvalue", m_CurrentValue);
+        info.AddValue(KEY_NAME, m_Name);
+        info.AddValue(KEY_VALUE, m_CurrentValue);
     }
 
     #endregion
