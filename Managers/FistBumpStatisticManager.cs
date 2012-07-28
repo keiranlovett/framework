@@ -74,19 +74,19 @@ public class FistBumpStatisticManager : MonoBehaviour
             case StatisticType.Min:
                 if (statValue < stat.Value)
                 {
-                    Debug.Log(string.Format("[Stats] {0} - New Min - {1}New={2}", statDef.Description, (!newStat ? string.Format("Old={0} ", stat.Value) : ""), statValue));
+                    Debug.Log(string.Format("[Stats] {0} - New Min - {1} New={2}", statDef.Description, (!newStat ? string.Format("Old={0} ", stat.Value) : ""), statValue));
                     stat.Value = statValue;
                 }
                 break;
             case StatisticType.Max:
                 if (statValue > stat.Value)
                 {
-                    Debug.Log(string.Format("[Stats] {0} - New Max - {1}New={2}", statDef.Description, (!newStat ? string.Format("Old={0} ", stat.Value) : ""), statValue));
+                    Debug.Log(string.Format("[Stats] {0} - New Max - {1} New={2}", statDef.Description, (!newStat ? string.Format("Old={0} ", stat.Value) : ""), statValue));
                     stat.Value = statValue;
                 }
                 break;
             case StatisticType.Replace:
-                Debug.Log(string.Format("[Stats] {0} - New Value - {1}New={2}", statDef.Description, (!newStat ? string.Format("Old={0} ", stat.Value) : ""), statValue));
+                Debug.Log(string.Format("[Stats] {0} - New Value - {1} New={2}", statDef.Description, (!newStat ? string.Format("Old={0} ", stat.Value) : ""), statValue));
                 stat.Value = statValue;
                 break;
         }
