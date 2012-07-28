@@ -1,5 +1,6 @@
 ﻿#region Using statements
 
+using FistBump.Framework;
 using UnityEngine;
 
 #endregion
@@ -9,7 +10,7 @@ using UnityEngine;
 [RequireComponent(typeof(FistBumpAudioManager))]
 [RequireComponent(typeof(FistBumpMissionManager))]
 [RequireComponent(typeof(FistBumpPlayerManager))]
-[RequireComponent(typeof(FistBumpStatisticManager))]
+[RequireComponent(typeof(StatisticManager))]
 public abstract class FistBumpGame : MonoBehaviour
 {
     #region Private Variables
@@ -23,7 +24,7 @@ public abstract class FistBumpGame : MonoBehaviour
     private FistBumpAudioManager m_AudioManager;
     private FistBumpMissionManager m_MissionManager;
     private FistBumpPlayerManager m_PlayerManager;
-    private FistBumpStatisticManager m_StatisticManager;
+    private StatisticManager m_StatisticManager;
     private FistBumpControlSchemeManager m_ControlSchemeManager;
 
     #endregion
@@ -59,7 +60,7 @@ public abstract class FistBumpGame : MonoBehaviour
     public FistBumpMissionManager Mission { get { return Instance.m_MissionManager; } }
     public FistBumpPlayerManager PlayerManager { get { return Instance.m_PlayerManager; } }
     public FistBumpControlSchemeManager ControlSchemes { get { return Instance.m_ControlSchemeManager; } }
-    public FistBumpStatisticManager Stats { get { return Instance.m_StatisticManager; } }
+    public StatisticManager Stats { get { return Instance.m_StatisticManager; } }
     #endregion
 
     #region Implementation of MonoBehaviour
@@ -112,7 +113,7 @@ public abstract class FistBumpGame : MonoBehaviour
         m_MissionManager = GetComponent<FistBumpMissionManager>() ?? gameObject.AddComponent<FistBumpMissionManager>();
         m_PlayerManager = GetComponent<FistBumpPlayerManager>() ?? gameObject.AddComponent<FistBumpPlayerManager>();
         m_ControlSchemeManager = GetComponent<FistBumpControlSchemeManager>() ?? gameObject.AddComponent<FistBumpControlSchemeManager>();
-        m_StatisticManager = GetComponent<FistBumpStatisticManager>() ?? gameObject.AddComponent<FistBumpStatisticManager>();
+        m_StatisticManager = GetComponent<StatisticManager>() ?? gameObject.AddComponent<StatisticManager>();
     }
     
 
