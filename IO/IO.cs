@@ -46,17 +46,17 @@ namespace FistBump.Framework
 
         #region Private fields
 
-        private static bool s_EncryptFiles = false;
-        private static string s_EncryptionKey = "12345678";
+        private const string DEFAULT_ENCRYPTION_KEY = "12345678";
+        private static string s_EncryptionKey = DEFAULT_ENCRYPTION_KEY;
         private static readonly BinaryFormatter s_Binaryformatter = new BinaryFormatter { Binder = new VersionDeserializationBinder() };
         private static DESCryptoServiceProvider s_DESProvider = new DESCryptoServiceProvider { Key = Encoding.ASCII.GetBytes(s_EncryptionKey), IV = Encoding.ASCII.GetBytes(s_EncryptionKey) };
+
         #endregion
 
         #region Public Accessor
 
         public static string EncryptionKey
         {
-            get { return s_EncryptionKey; }
             set
             {
                 s_EncryptionKey = value;
@@ -64,55 +64,35 @@ namespace FistBump.Framework
             }
         }
 
-        public static bool EncryptFiles
-        {
-            get { return s_EncryptFiles; }
-            set
-            {
-                s_EncryptFiles = value;
-                s_DESProvider = new DESCryptoServiceProvider { Key = Encoding.ASCII.GetBytes(s_EncryptionKey), IV = Encoding.ASCII.GetBytes(s_EncryptionKey) };
-            }
-        }
-
         #endregion
 
-        #region Private Methods
+        #region Secure IO
 
-        public static void Write<T>(string filename, T data)
+        public static void WriteSecure<T>(string filename, T data)
         {
-            if (s_EncryptFiles && s_EncryptionKey == "12345678") Debug.LogWarning("[IO] WARNING: Encrypting file with default, publicly known key");
+            if (s_EncryptionKey == DEFAULT_ENCRYPTION_KEY) Debug.LogWarning("[IO] WARNING: Encrypting file with default, publicly known key");
 
             FileStream writeStream = null;
             try
             {
                 writeStream = File.Open(filename, FileMode.Create);
-                if (s_EncryptFiles)
+                try
                 {
-                    try
-                    {
-                        Debug.Log("[IO] Writing Save Information (Encrypted)");
+                    Debug.Log(string.Format("[IO] Writing Encrypted Binary File {0}", filename));
+                    CryptoStream cryptoStream = new CryptoStream(writeStream, s_DESProvider.CreateEncryptor(), CryptoStreamMode.Write);
+                    s_Binaryformatter.Serialize(cryptoStream, data);
 
-                        CryptoStream cryptoStream = new CryptoStream(writeStream, s_DESProvider.CreateEncryptor(), CryptoStreamMode.Write);
-
-                        s_Binaryformatter.Serialize(cryptoStream, data);
-
-                        cryptoStream.Close();
-                    }
-                    catch (CryptographicException e)
-                    {
-                        Debug.Log(string.Format("[IO] A Cryptographic error occurred: {0}", e.Message));
-                        Debug.Break();
-                    }
+                    cryptoStream.Close();
                 }
-                else
+                catch (CryptographicException e)
                 {
-                    Debug.Log("[IO] Writing Save Information");
-                    s_Binaryformatter.Serialize(writeStream, data);
+                    Debug.Log(string.Format("[IO] A Cryptographic error occurred: {0}", e.Message));
+                    Debug.Break();
                 }
             }
             catch (Exception ex)
             {
-                Debug.Log("[IO] " + ex.ToString());
+                Debug.Log(string.Format("[IO] {0}", ex));
             }
             finally
             {
@@ -121,42 +101,32 @@ namespace FistBump.Framework
                     writeStream.Close();
                 }
             }
-
-
         }
 
-        public static T Read<T>(string filename)
+        public static T ReadSecure<T>(string filename)
         {
             T data = default(T);
             FileStream readStream = null;
             try
             {
                 readStream = File.Open(filename, FileMode.Open);
-                if (s_EncryptFiles)
+                try
                 {
-                    try
-                    {
-                        Debug.Log("[IO] Reading Save Information (Encrypted)");
-                        CryptoStream cryptoStream = new CryptoStream(readStream, s_DESProvider.CreateDecryptor(), CryptoStreamMode.Read);
-                        data = (T)s_Binaryformatter.Deserialize(cryptoStream);
+                    Debug.Log(string.Format("[IO] Reading Encrypted Binary File {0}", filename));
+                    CryptoStream cryptoStream = new CryptoStream(readStream, s_DESProvider.CreateDecryptor(), CryptoStreamMode.Read);
+                    data = (T)s_Binaryformatter.Deserialize(cryptoStream);
 
-                        cryptoStream.Close();
-                    }
-                    catch (CryptographicException e)
-                    {
-                        Debug.Log(string.Format("[IO] A Cryptographic error occurred: {0}", e.Message));
-                        Debug.Break();
-                    }
+                    cryptoStream.Close();
                 }
-                else
+                catch (CryptographicException e)
                 {
-                    Debug.Log("[IO] Reading Save Information");
-                    data = (T)s_Binaryformatter.Deserialize(readStream);
+                    Debug.Log(string.Format("[IO] A Cryptographic error occurred: {0}", e.Message));
+                    Debug.Break();
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
-                Debug.Log("[IO] " + ex.ToString());
+                Debug.Log(string.Format("[IO] {0}", ex));
             }
             finally
             {
@@ -169,6 +139,61 @@ namespace FistBump.Framework
             return data;
         }
 
+        #endregion
+
+        #region Binary IO
+
+        public static void WriteBinary<T>(string filename, T data)
+        {
+            FileStream writeStream = null;
+            try
+            {
+                writeStream = File.Open(filename, FileMode.Create);
+                Debug.Log(string.Format("[IO] Writing Binary File {0}", filename));
+                s_Binaryformatter.Serialize(writeStream, data);
+            }
+            catch (Exception ex)
+            {
+                Debug.Log(string.Format("[IO] {0}", ex));
+            }
+            finally
+            {
+                if (writeStream != null)
+                {
+                    writeStream.Close();
+                }
+            }
+        }
+
+        public static T ReadBinary<T>(string filename)
+        {
+            T data = default(T);
+            FileStream readStream = null;
+            try
+            {
+                readStream = File.Open(filename, FileMode.Open);
+                Debug.Log(string.Format("[IO] Reading Binary File {0}", filename));
+                data = (T)s_Binaryformatter.Deserialize(readStream);
+            }
+            catch (Exception ex)
+            {
+                Debug.Log(string.Format("[IO] {0}", ex));
+            }
+            finally
+            {
+                if (readStream != null)
+                {
+                    readStream.Close();
+                }
+            }
+
+            return data;
+        }
+
+        #endregion
+
+        #region XML IO
+
         public static void WriteXML<T>(string filename, T data)
         {
             XmlSerializer serializer = new XmlSerializer(typeof(T));
@@ -176,11 +201,12 @@ namespace FistBump.Framework
             try
             {
                 writeStream = File.Open(filename, FileMode.Create);
+                Debug.Log(string.Format("[IO] Writing XML File {0}", filename));
                 serializer.Serialize(writeStream, data);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
-                Debug.Log("[IO] " + ex.ToString());
+                Debug.Log(string.Format("[IO] {0}", ex));
             }
             finally
             {
@@ -200,11 +226,12 @@ namespace FistBump.Framework
             try
             {
                 readStream = File.Open(filename, FileMode.Open);
+                Debug.Log(string.Format("[IO] Reading XML File {0}", filename));
                 data = (T)serializer.Deserialize(readStream);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
-                Debug.Log("[IO] " + ex.ToString());
+                Debug.Log(string.Format("[IO] {0}", ex));
             }
             finally
             {
