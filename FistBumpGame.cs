@@ -10,11 +10,8 @@ public abstract class FistBumpGame : MonoBehaviour
     #region Private Variables
 
     public static string Version { get { return "0.1.0 Alpha"; } }
-
     protected static FistBumpGame s_Instance;
-    private FistBumpGameService m_GameService;
-    private FistBumpControlSchemeManager m_ControlSchemeManager;
-
+    
     #endregion
 
     #region Public Properties
@@ -41,8 +38,7 @@ public abstract class FistBumpGame : MonoBehaviour
             return s_Instance;
         }
     }
-    public FistBumpGameService GameService { get { return Instance.m_GameService; } }
-    public FistBumpControlSchemeManager ControlSchemes { get { return Instance.m_ControlSchemeManager; } }
+    
     #endregion
 
     #region Implementation of MonoBehaviour
@@ -89,7 +85,6 @@ public abstract class FistBumpGame : MonoBehaviour
     #region Private Methods
     private void InitializeManagers()
     {
-        m_ControlSchemeManager = GetComponent<FistBumpControlSchemeManager>() ?? gameObject.AddComponent<FistBumpControlSchemeManager>();
     }
     
 
@@ -101,8 +96,8 @@ public abstract class FistBumpGame : MonoBehaviour
             // try initialization
 
             // Kongregate
-            m_GameService = GetComponent<KongregateGameService>() ?? gameObject.AddComponent<KongregateGameService>();
-            m_GameService.Initialize();
+            //m_GameService = GetComponent<Kongregate>() ?? gameObject.AddComponent<Kongregate>();
+            //m_GameService.Initialize();
 
         }
         else if (Application.platform == RuntimePlatform.IPhonePlayer || Application.platform == RuntimePlatform.Android)
