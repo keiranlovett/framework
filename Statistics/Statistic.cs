@@ -55,7 +55,7 @@ namespace FistBump.Framework
                 m_CurrentValue = int.MaxValue;
         }
 
-        public Statistic(SerializationInfo info, StreamingContext ctxt)
+        public Statistic(SerializationInfo info, StreamingContext context)
         {
             m_Name = (int)info.GetValue(KEY_NAME, typeof(int));
             m_CurrentValue = (int)info.GetValue(KEY_VALUE, typeof(int));
