@@ -15,7 +15,8 @@ public class KongregateGameService : FistBumpGameService
     {
         get
         {
-            CallAPIFunction("kongregate.services.isGuest()", "SetIsGuest");
+            if (!m_IsGuest && string.IsNullOrEmpty(m_Username))
+                CallAPIFunction("kongregate.services.isGuest()", "SetIsGuest");
             return m_IsGuest;
         }
     }
@@ -33,7 +34,8 @@ public class KongregateGameService : FistBumpGameService
     {
         get
         {
-            CallAPIFunction("kongregate.services.getUsername()", "SetUsername");
+            if (string.IsNullOrEmpty(m_Username))
+                CallAPIFunction("kongregate.services.getUsername()", "SetUsername");
             return m_Username;
         }
     }
@@ -46,7 +48,8 @@ public class KongregateGameService : FistBumpGameService
     {
         get
         {
-            CallAPIFunction("kongregate.services.getUserId()", "SetUserId");
+            if (m_UserId == 0)
+                CallAPIFunction("kongregate.services.getUserId()", "SetUserId");
             return m_UserId;
         }
     }
