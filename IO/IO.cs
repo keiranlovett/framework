@@ -50,7 +50,8 @@ namespace FistBump.Framework
         private static string s_EncryptionKey = DEFAULT_ENCRYPTION_KEY;
         private static readonly BinaryFormatter s_Binaryformatter = new BinaryFormatter { Binder = new VersionDeserializationBinder() };
         private static DESCryptoServiceProvider s_DESProvider = new DESCryptoServiceProvider { Key = Encoding.ASCII.GetBytes(s_EncryptionKey), IV = Encoding.ASCII.GetBytes(s_EncryptionKey) };
-
+        private static bool s_IsVerbose = true;
+        
         #endregion
 
         #region Public Accessor
@@ -60,8 +61,14 @@ namespace FistBump.Framework
             set
             {
                 s_EncryptionKey = value;
-                s_DESProvider = new DESCryptoServiceProvider { Key = Encoding.ASCII.GetBytes(s_EncryptionKey), IV = Encoding.ASCII.GetBytes(s_EncryptionKey) };
+                if (s_EncryptionKey.Length != 8) Debug.LogError("[IO] ERROR: Encryption key length need to be 8");
+                s_DESProvider = new DESCryptoServiceProvider { Key = Encoding.ASCII.GetBytes(s_EncryptionKey), IV = Encoding.ASCII.GetBytes(s_EncryptionKey)};
             }
+        }
+        public static bool IsVerbose
+        {
+            get { return s_IsVerbose; }
+            set { s_IsVerbose = value; }
         }
 
         #endregion
@@ -75,10 +82,11 @@ namespace FistBump.Framework
             FileStream writeStream = null;
             try
             {
-                writeStream = File.Open(filename, FileMode.Create);
+                writeStream = File.Open(Path.Combine(Application.persistentDataPath, filename), FileMode.Create);
                 try
                 {
-                    Debug.Log(string.Format("[IO] Writing Encrypted Binary File {0}", filename));
+                    if(IsVerbose)
+                        Debug.Log(string.Format("[IO] Writing Encrypted Binary File {0}", filename));
                     CryptoStream cryptoStream = new CryptoStream(writeStream, s_DESProvider.CreateEncryptor(), CryptoStreamMode.Write);
                     s_Binaryformatter.Serialize(cryptoStream, data);
 
@@ -109,10 +117,11 @@ namespace FistBump.Framework
             FileStream readStream = null;
             try
             {
-                readStream = File.Open(filename, FileMode.Open);
+                readStream = File.Open(Path.Combine(Application.persistentDataPath, filename), FileMode.Open);
                 try
                 {
-                    Debug.Log(string.Format("[IO] Reading Encrypted Binary File {0}", filename));
+                    if(IsVerbose)
+                        Debug.Log(string.Format("[IO] Reading Encrypted Binary File {0}", filename));
                     CryptoStream cryptoStream = new CryptoStream(readStream, s_DESProvider.CreateDecryptor(), CryptoStreamMode.Read);
                     data = (T)s_Binaryformatter.Deserialize(cryptoStream);
 
@@ -148,8 +157,9 @@ namespace FistBump.Framework
             FileStream writeStream = null;
             try
             {
-                writeStream = File.Open(filename, FileMode.Create);
-                Debug.Log(string.Format("[IO] Writing Binary File {0}", filename));
+                writeStream = File.Open(Path.Combine(Application.persistentDataPath, filename), FileMode.Create);
+                if(IsVerbose)
+                    Debug.Log(string.Format("[IO] Writing Binary File {0}", filename));
                 s_Binaryformatter.Serialize(writeStream, data);
             }
             catch (Exception ex)
@@ -171,8 +181,9 @@ namespace FistBump.Framework
             FileStream readStream = null;
             try
             {
-                readStream = File.Open(filename, FileMode.Open);
-                Debug.Log(string.Format("[IO] Reading Binary File {0}", filename));
+                readStream = File.Open(Path.Combine(Application.persistentDataPath, filename), FileMode.Open);
+                if(IsVerbose)
+                    Debug.Log(string.Format("[IO] Reading Binary File {0}", filename));
                 data = (T)s_Binaryformatter.Deserialize(readStream);
             }
             catch (Exception ex)
@@ -200,8 +211,9 @@ namespace FistBump.Framework
             FileStream writeStream = null;
             try
             {
-                writeStream = File.Open(filename, FileMode.Create);
-                Debug.Log(string.Format("[IO] Writing XML File {0}", filename));
+                writeStream = File.Open(Path.Combine(Application.persistentDataPath, filename), FileMode.Create);
+                if(IsVerbose)
+                    Debug.Log(string.Format("[IO] Writing XML File {0}", filename));
                 serializer.Serialize(writeStream, data);
             }
             catch (Exception ex)
@@ -225,8 +237,9 @@ namespace FistBump.Framework
             FileStream readStream = null;
             try
             {
-                readStream = File.Open(filename, FileMode.Open);
-                Debug.Log(string.Format("[IO] Reading XML File {0}", filename));
+                readStream = File.Open(Path.Combine(Application.persistentDataPath, filename), FileMode.Open);
+                if(IsVerbose)
+                    Debug.Log(string.Format("[IO] Reading XML File {0}", filename));
                 data = (T)serializer.Deserialize(readStream);
             }
             catch (Exception ex)
@@ -238,6 +251,60 @@ namespace FistBump.Framework
                 if (readStream != null)
                 {
                     readStream.Close();
+                }
+            }
+
+            return data;
+        }
+
+        #endregion
+
+        #region PlayerPrefs IO
+
+        public static void WritePlayerPref<T>(string filename, T data)
+        {
+            MemoryStream memoryStream = new MemoryStream();
+            try
+            {
+                if(IsVerbose)
+                    Debug.Log(string.Format("[IO] Writing In Player Pref File {0}", filename));
+                s_Binaryformatter.Serialize(memoryStream, data);
+                PlayerPrefs.SetString(filename, System.Convert.ToBase64String(memoryStream.ToArray()));
+            }
+            catch (Exception ex)
+            {
+                Debug.Log(string.Format("[IO] {0}", ex));
+            }
+            finally
+            {
+                memoryStream.Close();
+            }
+        }
+
+        public static T ReadPlayerPref<T>(string filename)
+        {
+            T data = default(T);
+            if (PlayerPrefs.HasKey(filename))
+                return data;
+
+            MemoryStream dataStream = null;
+            try
+            {
+                if(IsVerbose)
+                    Debug.Log(string.Format("[IO] Reading In Player Pref File {0}", filename));
+                string serializedData = PlayerPrefs.GetString(filename);
+                dataStream = new MemoryStream(Convert.FromBase64String(serializedData));
+                data = (T) s_Binaryformatter.Deserialize(dataStream);
+            }
+            catch (Exception ex)
+            {
+                Debug.Log(string.Format("[IO] {0}", ex));
+            }
+            finally
+            {
+                if (dataStream != null)
+                {
+                    dataStream.Close();
                 }
             }
 

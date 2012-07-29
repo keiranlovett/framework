@@ -7,10 +7,10 @@ using UnityEngine;
 
 [RequireComponent(typeof(FistBumpGameManager))]
 [RequireComponent(typeof(FistBumpScreenManager))]
-[RequireComponent(typeof(FistBumpAudioManager))]
+//[RequireComponent(typeof(FistBumpAudioManager))]
 [RequireComponent(typeof(FistBumpMissionManager))]
 [RequireComponent(typeof(FistBumpPlayerManager))]
-[RequireComponent(typeof(StatisticManager))]
+//[RequireComponent(typeof(StatisticManager))]
 public abstract class FistBumpGame : MonoBehaviour
 {
     #region Private Variables
@@ -21,10 +21,10 @@ public abstract class FistBumpGame : MonoBehaviour
     private FistBumpGameService m_GameService;
     private FistBumpGameManager m_GameManager;
     private FistBumpScreenManager m_ScreenManager;
-    private FistBumpAudioManager m_AudioManager;
+//    private FistBumpAudioManager m_AudioManager;
     private FistBumpMissionManager m_MissionManager;
     private FistBumpPlayerManager m_PlayerManager;
-    private StatisticManager m_StatisticManager;
+    //private StatisticManager m_StatisticManager;
     private FistBumpControlSchemeManager m_ControlSchemeManager;
 
     #endregion
@@ -56,11 +56,11 @@ public abstract class FistBumpGame : MonoBehaviour
     public  FistBumpGameService GameService { get { return Instance.m_GameService; } }
     public FistBumpGameManager Game { get { return Instance.m_GameManager; } }
     public FistBumpScreenManager Screen { get { return Instance.m_ScreenManager; } }
-    public FistBumpAudioManager Audio { get { return Instance.m_AudioManager; } }
+    //public FistBumpAudioManager Audio { get { return Instance.m_AudioManager; } }
     public FistBumpMissionManager Mission { get { return Instance.m_MissionManager; } }
     public FistBumpPlayerManager PlayerManager { get { return Instance.m_PlayerManager; } }
     public FistBumpControlSchemeManager ControlSchemes { get { return Instance.m_ControlSchemeManager; } }
-    public StatisticManager Stats { get { return Instance.m_StatisticManager; } }
+    //public StatisticManager Stats { get { return Instance.m_StatisticManager; } }
     #endregion
 
     #region Implementation of MonoBehaviour
@@ -109,11 +109,11 @@ public abstract class FistBumpGame : MonoBehaviour
     {
         m_GameManager = GetComponent<FistBumpGameManager>() ?? gameObject.AddComponent<FistBumpGameManager>();
         m_ScreenManager = GetComponent<FistBumpScreenManager>() ?? gameObject.AddComponent<FistBumpScreenManager>();
-        m_AudioManager = GetComponent<FistBumpAudioManager>() ?? gameObject.AddComponent<FistBumpAudioManager>();
+        //m_AudioManager = GetComponent<FistBumpAudioManager>() ?? gameObject.AddComponent<FistBumpAudioManager>();
         m_MissionManager = GetComponent<FistBumpMissionManager>() ?? gameObject.AddComponent<FistBumpMissionManager>();
         m_PlayerManager = GetComponent<FistBumpPlayerManager>() ?? gameObject.AddComponent<FistBumpPlayerManager>();
         m_ControlSchemeManager = GetComponent<FistBumpControlSchemeManager>() ?? gameObject.AddComponent<FistBumpControlSchemeManager>();
-        m_StatisticManager = GetComponent<StatisticManager>() ?? gameObject.AddComponent<StatisticManager>();
+        //m_StatisticManager = GetComponent<StatisticManager>() ?? gameObject.AddComponent<StatisticManager>();
     }
     
 

@@ -26,13 +26,23 @@ namespace FistBump.Framework
 
         private readonly int m_Name = 0;
         private int m_CurrentValue = 0;
+        private bool m_IsDirty = false;
 
         #endregion
 
         #region Public Fields
 
         public int Name { get { return m_Name; } }
-        public int Value { get { return m_CurrentValue; } set { m_CurrentValue = value; } }
+        public bool IsDirty { get { return m_IsDirty; } }
+        public int Value
+        {
+            get { return m_CurrentValue; }
+            set
+            {
+                m_CurrentValue = value;
+                m_IsDirty = true;
+            } 
+        }
 
         #endregion
 

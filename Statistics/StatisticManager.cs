@@ -12,14 +12,37 @@ namespace FistBump.Framework
 	/// 
 	/// </summary>
 	/// <remarks>FistBump.ca - Copyright (C)</remarks>
-	public class StatisticManager : MonoBehaviour
-	{
-	    #region Private Fields
-	
-	    private List<Statistic> m_Statistics = new List<Statistic>();
+	public class StatisticManager
+    {
+        #region Singleton
+
+        static readonly StatisticManager s_Instance = new StatisticManager();
+        static StatisticManager()
+        {
+        }
+
+        public static StatisticManager Instance
+        {
+            get
+            {
+                return s_Instance;
+            }
+        }
+        #endregion
+
+        #region Private Fields
+
+        private List<Statistic> m_Statistics = new List<Statistic>();
 	    private readonly List<StatisticDefinition> m_StatisticsDefinitions = new List<StatisticDefinition>();
+        private static bool s_IsVerbose = true;
 	
 	    #endregion
+
+        #region Public Accessor
+
+        public static bool IsVerbose { get { return s_IsVerbose; } set { s_IsVerbose = value; } }
+
+        #endregion
 	
 	    #region Public Methods
 
@@ -47,25 +70,29 @@ namespace FistBump.Framework
 	        switch (statDef.Type)
 	        {
 	            case StatisticType.Add:
-	                Debug.Log(string.Format("[Stats] {0} - New Total - Old={1} New={2}", statDef.Description, stat.Value, stat.Value + statValue));
+                    if(IsVerbose)
+	                    Debug.Log(string.Format("[Stats] {0} - New Total - Old={1} New={2}", statDef.Description, stat.Value, stat.Value + statValue));
 	                stat.Value += statValue;
 	                break;
 	            case StatisticType.Min:
 	                if (statValue < stat.Value)
 	                {
-	                    Debug.Log(string.Format("[Stats] {0} - New Min - {1} New={2}", statDef.Description, (!newStat ? string.Format("Old={0} ", stat.Value) : ""), statValue));
+                        if (IsVerbose)
+                            Debug.Log(string.Format("[Stats] {0} - New Min - {1}New={2}", statDef.Description, (!newStat ? string.Format("Old={0} ", stat.Value) : ""), statValue));
 	                    stat.Value = statValue;
 	                }
 	                break;
 	            case StatisticType.Max:
 	                if (statValue > stat.Value)
 	                {
-	                    Debug.Log(string.Format("[Stats] {0} - New Max - {1} New={2}", statDef.Description, (!newStat ? string.Format("Old={0} ", stat.Value) : ""), statValue));
+                        if (IsVerbose)
+                            Debug.Log(string.Format("[Stats] {0} - New Max - {1}New={2}", statDef.Description, (!newStat ? string.Format("Old={0} ", stat.Value) : ""), statValue));
 	                    stat.Value = statValue;
 	                }
 	                break;
 	            case StatisticType.Replace:
-	                Debug.Log(string.Format("[Stats] {0} - New Value - {1} New={2}", statDef.Description, (!newStat ? string.Format("Old={0} ", stat.Value) : ""), statValue));
+                    if (IsVerbose)
+                        Debug.Log(string.Format("[Stats] {0} - New Value - {1}New={2}", statDef.Description, (!newStat ? string.Format("Old={0} ", stat.Value) : ""), statValue));
 	                stat.Value = statValue;
 	                break;
 	        }
