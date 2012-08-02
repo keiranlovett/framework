@@ -44,7 +44,7 @@ namespace FistBump.Framework
 
         #region Implementation of ISerializable
 
-        public new void GetObjectData(SerializationInfo info, StreamingContext context)
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue(KEY_TASKS, m_Tasks);
         }

@@ -18,7 +18,7 @@ namespace FistBump.Framework
         private readonly string m_Name = "Player";
         private NetworkPlayer m_NetworkPlayer;
         private readonly PlayerMetadata m_Metadata = new PlayerMetadata();
-        private FistBumpControlScheme m_ControlScheme = new FistBumpControlScheme(InputDevices.Keyboard, "Arrows", 0.001f);
+        private ControlScheme m_ControlScheme = new ControlScheme(InputDevices.Keyboard, "Arrows", 0.001f);
 
         #endregion
 
@@ -42,7 +42,7 @@ namespace FistBump.Framework
             get { return m_Metadata; }
         }
 
-        public FistBumpControlScheme ControlScheme
+        public ControlScheme ControlScheme
         {
             get { return m_ControlScheme; }
             set { m_ControlScheme = value; }
