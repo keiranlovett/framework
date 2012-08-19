@@ -1,5 +1,7 @@
 ﻿#region Using statements
 
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Runtime.Serialization;
@@ -16,18 +18,10 @@ namespace FistBump.Framework
     {
         #region Singleton
 
+        static StatisticManager() { }
         static readonly StatisticManager s_Instance = new StatisticManager();
-        static StatisticManager()
-        {
-        }
+        public static StatisticManager Instance { get { return s_Instance; } }
 
-        public static StatisticManager Instance
-        {
-            get
-            {
-                return s_Instance;
-            }
-        }
         #endregion
 
         #region Private Fields
@@ -45,6 +39,76 @@ namespace FistBump.Framework
         #endregion
 	
 	    #region Public Methods
+
+        public void LoadDefinitions(TextAsset definitionFile)
+        {
+            if (definitionFile != null)
+            {
+                LoadDefinitions(definitionFile.text);
+            }
+        }
+        public void LoadDefinitions(string definitionJSON)
+        {
+            Hashtable jsonTable = MiniJSON.jsonDecode(definitionJSON) as Hashtable;
+
+            if (jsonTable != null)
+            {
+                ArrayList statDefinitions = jsonTable["statDefinitions"] as ArrayList;
+                if (statDefinitions != null)
+                {
+                    foreach(Hashtable statDefinition in statDefinitions)
+                    {
+                        string id = statDefinition["id"] as string;
+                        string desc = statDefinition["description"] as string;
+                        string typeString = statDefinition["type"] as string;
+
+                        if (typeString != null)
+                        {
+
+                            try
+                            {
+                                StatisticType statisticType = (StatisticType)Enum.Parse(typeof(StatisticType), typeString, true);
+                                if (Enum.IsDefined(typeof(StatisticType), statisticType))
+                                {
+                                    if (id == null)
+                                    {
+                                        Debug.LogWarning("[Stats] Missing id");
+                                        continue;
+                                    }
+                                    if (desc == null)
+                                    {
+                                        Debug.LogWarning("[Stats] Missing description");
+                                        continue;
+                                    }
+
+                                    AddDefinition(id, desc, statisticType);
+                                }
+                                else
+                                {
+                                    Debug.LogWarning(string.Format("[Stats] {0} is not an underlying value of the StatisticType enumeration.", typeString));
+                                }
+
+                            }
+                            catch (ArgumentException)
+                            {
+                                Debug.LogWarning(string.Format("[Stats] {0} is not a member of the StatisticType enumeration.", typeString));
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (!MiniJSON.lastDecodeSuccessful())
+                {
+                    Debug.LogWarning(string.Format("[Stats] Unable to decode JSON definition file. Error: {0}", MiniJSON.getLastErrorSnippet()));
+                }
+                else
+                {
+                    Debug.LogWarning("[Stats] Unable to decode JSON definition file.");
+                }
+            }
+        }
 
         public void Submit(string statName, int statValue)
         {
@@ -118,12 +182,6 @@ namespace FistBump.Framework
 	        if (m_StatisticsDefinitions.Find(s => s.Name == statName) == null)
 	            m_StatisticsDefinitions.Add(new StatisticDefinition(statName, description, type));
 	    }
-	
-	    #endregion
-	
-	    #region Implementation of MonoBehaviour
-	    
-	
 	
 	    #endregion
 	}
