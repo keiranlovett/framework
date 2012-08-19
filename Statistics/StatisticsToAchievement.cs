@@ -14,7 +14,7 @@ namespace FistBump.Framework
     /// </summary>
     /// <remarks>FistBump.ca - Copyright (C)</remarks>
     [Serializable]
-    public class Achievement
+    public class StatisticsToAchievement
     {
         #region Constants
 
@@ -30,12 +30,12 @@ namespace FistBump.Framework
 
         #region Ctor
 
-        public Achievement()
+        public StatisticsToAchievement()
         {
             
         }
 
-        public Achievement(SerializationInfo info, StreamingContext context)
+        public StatisticsToAchievement(SerializationInfo info, StreamingContext context)
         {
             m_Tasks = (List<Task>)info.GetValue(KEY_TASKS, typeof(List<Task>));
         }
