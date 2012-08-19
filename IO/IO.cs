@@ -70,6 +70,25 @@ namespace FistBump.Framework
             get { return s_IsVerbose; }
             set { s_IsVerbose = value; }
         }
+        
+        #endregion
+
+        #region Path
+
+        public static string ToDataPath(string filename)
+        {
+            return Path.Combine(Application.dataPath, filename);
+        }
+
+        public static string ToPersistentDataPath(string filename)
+        {
+            return Path.Combine(Application.persistentDataPath, filename);
+        }
+
+        public static string ToStreamingAssetsPath(string filename)
+        {
+            return Path.Combine(Application.streamingAssetsPath, filename);
+        }
 
         #endregion
 
@@ -82,7 +101,7 @@ namespace FistBump.Framework
             FileStream writeStream = null;
             try
             {
-                writeStream = File.Open(Path.Combine(Application.persistentDataPath, filename), FileMode.Create);
+                writeStream = File.Open(filename, FileMode.Create);
                 try
                 {
                     if(IsVerbose)
@@ -117,7 +136,7 @@ namespace FistBump.Framework
             FileStream readStream = null;
             try
             {
-                readStream = File.Open(Path.Combine(Application.persistentDataPath, filename), FileMode.Open);
+                readStream = File.Open(filename, FileMode.Open);
                 try
                 {
                     if(IsVerbose)
@@ -157,7 +176,7 @@ namespace FistBump.Framework
             FileStream writeStream = null;
             try
             {
-                writeStream = File.Open(Path.Combine(Application.persistentDataPath, filename), FileMode.Create);
+                writeStream = File.Open(filename, FileMode.Create);
                 if(IsVerbose)
                     Debug.Log(string.Format("[IO] Writing Binary File {0}", filename));
                 s_Binaryformatter.Serialize(writeStream, data);
@@ -181,7 +200,7 @@ namespace FistBump.Framework
             FileStream readStream = null;
             try
             {
-                readStream = File.Open(Path.Combine(Application.persistentDataPath, filename), FileMode.Open);
+                readStream = File.Open(filename, FileMode.Open);
                 if(IsVerbose)
                     Debug.Log(string.Format("[IO] Reading Binary File {0}", filename));
                 data = (T)s_Binaryformatter.Deserialize(readStream);
@@ -211,7 +230,7 @@ namespace FistBump.Framework
             FileStream writeStream = null;
             try
             {
-                writeStream = File.Open(Path.Combine(Application.persistentDataPath, filename), FileMode.Create);
+                writeStream = File.Open(filename, FileMode.Create);
                 if(IsVerbose)
                     Debug.Log(string.Format("[IO] Writing XML File {0}", filename));
                 serializer.Serialize(writeStream, data);
@@ -237,7 +256,7 @@ namespace FistBump.Framework
             FileStream readStream = null;
             try
             {
-                readStream = File.Open(Path.Combine(Application.persistentDataPath, filename), FileMode.Open);
+                readStream = File.Open(filename, FileMode.Open);
                 if(IsVerbose)
                     Debug.Log(string.Format("[IO] Reading XML File {0}", filename));
                 data = (T)serializer.Deserialize(readStream);
