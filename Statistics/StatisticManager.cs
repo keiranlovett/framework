@@ -14,16 +14,8 @@ namespace FistBump.Framework
 	/// 
 	/// </summary>
 	/// <remarks>FistBump.ca - Copyright (C)</remarks>
-	public class StatisticManager
+	public class StatisticManager : Singleton<StatisticManager>
     {
-        #region Singleton
-
-        static StatisticManager() { }
-        static readonly StatisticManager s_Instance = new StatisticManager();
-        public static StatisticManager Instance { get { return s_Instance; } }
-
-        #endregion
-
         #region Private Fields
 
         private List<Statistic> m_Statistics = new List<Statistic>();
