@@ -38,8 +38,13 @@ namespace FistBump.Framework
             {
                 LoadDefinitions(definitionFile.text);
             }
+            else
+            {
+                Debug.Log("[Stats] No stat definition file provided.");
+            }
         }
-        public void LoadDefinitions(string definitionJSON)
+
+        private void LoadDefinitions(string definitionJSON)
         {
             Hashtable jsonTable = MiniJSON.jsonDecode(definitionJSON) as Hashtable;
 

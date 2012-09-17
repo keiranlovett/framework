@@ -14,10 +14,18 @@ public abstract class FistBumpGame : SingletonMonoBehaviour<FistBumpGame>
     /// <summary>
     /// Awake is called when the script instance is being loaded.
     /// </summary>
-    protected override void Awake()
+    protected virtual void Awake()
     {
-        base.Awake();
         DontDestroyOnLoad(gameObject);
+
+        if (StatDefinitions != null)
+        {
+            StatisticManager.Instance.LoadDefinitions(StatDefinitions);
+        }
+        else
+        {
+            Debug.Log("[FistBumpGame] No stat definition file provided. You'll have to add Statistic Definition manually to use this module");
+        }
 
         SocialConnector.Connect();
     }
