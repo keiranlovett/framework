@@ -11,6 +11,8 @@ namespace FistBump.Framework
         private static bool s_Connected = false;
         //private static bool s_Connecting = false;
 
+        public static TextAsset LocalAchievementDescriptions;
+
         public static void Connect()
         {
             if (s_Connected || /*s_Connecting ||*/ Social.localUser.authenticated)
@@ -25,6 +27,7 @@ namespace FistBump.Framework
             {
                 Debug.Log("[SocialConnector] Connecting Social API to LocalPlatform");
                 Social.Active = LocalPlatform.Instance;
+                LocalPlatform.Instance.LoadAchievementDescriptions(LocalAchievementDescriptions);
             }
             else
             {

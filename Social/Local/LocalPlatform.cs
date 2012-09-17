@@ -53,41 +53,6 @@ namespace FistBump.Framework.SocialPlatforms
             {
                 if (!m_LocalUser.authenticated)
                 {
-                    string definitionJSON = "{ \"achievementDescriptions\":[ { \"id\": \"firststeps\", \"title\": \"First Steps\", \"points\": 10, \"achievedDescription\": \"You've taken your first steps\", \"unachievedDescription\": \"Take your first step\", \"hidden\":false, \"image\": \"\" }, { \"id\": \"overninethousand\", \"title\": \"What !?\", \"points\": 10, \"achievedDescription\": \"It's over nine thousand!!!\", \"unachievedDescription\": \"9001\", \"hidden\":false, \"image\": \"\" } ]}";
-                    Hashtable jsonTable = MiniJSON.jsonDecode(definitionJSON) as Hashtable;
-
-                    if (jsonTable != null)
-                    {
-                        ArrayList achievementDefinitions = jsonTable["achievementDescriptions"] as ArrayList;
-                        if (achievementDefinitions != null)
-                        {
-                            foreach (Hashtable achievementDefinition in achievementDefinitions)
-                            {
-                                string id = achievementDefinition["id"] as string;
-                                string title = achievementDefinition["title"] as string;
-                                int points = (achievementDefinition["points"] is long ? (int) achievementDefinition["points"] : 0);
-                                string achievedDescription = achievementDefinition["achievedDescription"] as string;
-                                string unachievedDescription = achievementDefinition["unachievedDescription"] as string;
-                                bool hidden = achievementDefinition["hidden"] is bool ? (bool) achievementDefinition["hidden"] : false;
-
-                                new AchievementDescription(id, title, null, achievedDescription, unachievedDescription, hidden, points);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (!MiniJSON.lastDecodeSuccessful())
-                        {
-                            Debug.LogWarning(string.Format("[LocalPlatform] Unable to decode JSON definition file. Error: {0}", MiniJSON.getLastErrorSnippet()));
-                        }
-                        else
-                        {
-                            Debug.LogWarning("[LocalPlatform] Unable to decode JSON definition file.");
-                        }
-                    }
-
-
-
                     m_LocalUser.SetAuthenticated(true);
                     m_LocalUser.SetUnderage(false);
                     m_LocalUser.SetUserID("1000");
@@ -104,6 +69,53 @@ namespace FistBump.Framework.SocialPlatforms
             else
             {
                 callback.SafeInvoke(false);
+            }
+        }
+
+        public void LoadAchievementDescriptions(TextAsset descriptionFile)
+        {
+            if (descriptionFile != null)
+            {
+                LoadAchievementDescriptions(descriptionFile.text);
+            }
+            else
+            {
+                Debug.Log("[LocalPlatform] No achievement description file provided.");
+            }
+        }
+
+        private void LoadAchievementDescriptions(string descriptionJSON)
+        {
+            Hashtable jsonTable = MiniJSON.jsonDecode(descriptionJSON) as Hashtable;
+
+            if (jsonTable != null)
+            {
+                ArrayList achievementDefinitions = jsonTable["achievementDescriptions"] as ArrayList;
+                if (achievementDefinitions != null)
+                {
+                    foreach (Hashtable achievementDefinition in achievementDefinitions)
+                    {
+                        string id = achievementDefinition["id"] as string;
+                        string title = achievementDefinition["title"] as string;
+                        int points = (achievementDefinition["points"] is long ? (int)achievementDefinition["points"] : 0);
+                        string achievedDescription = achievementDefinition["achievedDescription"] as string;
+                        string unachievedDescription = achievementDefinition["unachievedDescription"] as string;
+                        bool hidden = achievementDefinition["hidden"] is bool ? (bool)achievementDefinition["hidden"] : false;
+
+                        m_AchievementDescriptions.Add(new AchievementDescription(id, title, null, achievedDescription, unachievedDescription, hidden, points));
+                    }
+                }
+            }
+            else
+            {
+                if (!MiniJSON.lastDecodeSuccessful())
+                {
+                    Debug.LogWarning(string.Format("[LocalPlatform] Unable to decode JSON definition file. Error: {0}", MiniJSON.getLastErrorSnippet()));
+                }
+                else
+                {
+                    Debug.LogWarning("[LocalPlatform] Unable to decode JSON definition file.");
+                }
             }
         }
 

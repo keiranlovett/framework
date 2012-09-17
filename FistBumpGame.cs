@@ -27,6 +27,7 @@ public abstract class FistBumpGame : SingletonMonoBehaviour<FistBumpGame>
             Debug.Log("[FistBumpGame] No stat definition file provided. You'll have to add Statistic Definition manually to use this module");
         }
 
+        SocialConnector.LocalAchievementDescriptions = AchievementDescriptions;
         SocialConnector.Connect();
     }
     
