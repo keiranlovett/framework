@@ -25,7 +25,7 @@ namespace FistBump.Framework
         private static T CreateSingletonInstance()
         {
             GameObject gameObject = new GameObject(typeof(T).GetType().Name);
-            Debug.LogWarning("Could not find " + gameObject.name + ", creating", gameObject);
+            Debug.LogWarning("[SingletonMonoBehaviour] Could not find " + gameObject.name + ", creating", gameObject);
             return gameObject.AddComponent<T>();
         }
 
