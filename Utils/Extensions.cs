@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace FistBump.Framework.ExtensionMethods
 {
@@ -36,6 +38,48 @@ namespace FistBump.Framework.ExtensionMethods
         public static void SafeInvoke(this EventHandler handler, object sender)
         {
             if (handler != null) handler(sender, EventArgs.Empty);
+        }
+        #endregion
+
+        #region MonoBehaviour Extensions
+
+        public static T GetInterfaceComponent<T>(this MonoBehaviour obj) where T : class
+        {
+            return obj.GetComponent(typeof(T)) as T;
+        }
+
+        public static T[] FindObjectsOfType<T>(this MonoBehaviour obj) where T : MonoBehaviour
+        {
+            return Object.FindObjectsOfType(typeof(T)) as T[];
+        }
+
+        public static List<T> FindObjectsOfInterface<T>(this MonoBehaviour obj) where T : class
+        {
+            MonoBehaviour[] monoBehaviours = obj.FindObjectsOfType<MonoBehaviour>();
+            List<T> list = new List<T>();
+
+            foreach (MonoBehaviour behaviour in monoBehaviours)
+            {
+                T component = behaviour.GetComponent(typeof(T)) as T;
+                if (component != null)
+                {
+                    list.Add(component);
+                }
+            }
+
+            return list;
+        }
+
+        public static T GetSafeComponent<T>(this MonoBehaviour obj) where T : MonoBehaviour
+        {
+            T component = obj.GetComponent<T>();
+
+            if (component == null)
+            {
+                Debug.LogError(string.Format("Expected to find component of type {0} but found none", typeof(T)), obj);
+            }
+
+            return component;
         }
         #endregion
     }
