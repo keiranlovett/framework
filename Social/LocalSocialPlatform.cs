@@ -1,13 +1,14 @@
-using System;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using FistBump.Framework;
 using FistBump.Framework.ExtensionMethods;
 using UnityEngine;
-using System.Collections;
 using UnityEngine.SocialPlatforms;
 using UnityEngine.SocialPlatforms.Impl;
 
-namespace FistBump.Framework.SocialPlatforms
+namespace FistBump.Framework
 {
     [Serializable]
     public class LocalPlatformData
@@ -18,7 +19,7 @@ namespace FistBump.Framework.SocialPlatforms
         public List<Leaderboard> Leaderboards = new List<Leaderboard>();
         public List<Achievement> Achievements = new List<Achievement>();
     }
-    public class LocalPlatform : Singleton<LocalPlatform>, ISocialPlatform
+    public class LocalSocialPlatform : Singleton<LocalSocialPlatform>, ISocialPlatform
     {
         private static int s_MaximumLeaderboardEntry = 100;
 

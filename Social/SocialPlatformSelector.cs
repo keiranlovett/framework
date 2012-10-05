@@ -1,21 +1,21 @@
 using System;
-using FistBump.Framework.SocialPlatforms;
+using FistBump.Framework;
 using UnityEngine;
 using System.Collections;
 using UnityEngine.SocialPlatforms;
 
 namespace FistBump.Framework
 {
-    public static class SocialConnector
+    public static class SocialPlatformSelector
     {
-        private static bool s_Connected = false;
+        private static bool s_Selected = false;
         //private static bool s_Connecting = false;
 
         public static TextAsset LocalAchievementDescriptions;
 
-        public static void Connect()
+        public static void Select()
         {
-            if (s_Connected || /*s_Connecting ||*/ Social.localUser.authenticated)
+            if (s_Selected || /*s_Connecting ||*/ Social.localUser.authenticated)
             {
                 return;
             }
@@ -26,8 +26,8 @@ namespace FistBump.Framework
             if (Application.platform != RuntimePlatform.IPhonePlayer)
             {
                 Debug.Log("[SocialConnector] Connecting Social API to LocalPlatform");
-                Social.Active = LocalPlatform.Instance;
-                LocalPlatform.Instance.LoadAchievementDescriptions(LocalAchievementDescriptions);
+                Social.Active = LocalSocialPlatform.Instance;
+                LocalSocialPlatform.Instance.LoadAchievementDescriptions(LocalAchievementDescriptions);
             }
             else
             {
@@ -35,7 +35,7 @@ namespace FistBump.Framework
             }
             //TODO: Add support for Kongregate, OpenFeint and other Social Platforms.
 
-            s_Connected = true;
+            s_Selected = true;
         }
     }
 }
