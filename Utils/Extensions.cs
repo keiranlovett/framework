@@ -7,6 +7,13 @@ namespace FistBump.Framework.ExtensionMethods
 {
     public static class Extensions
     {
+        #region String Extensions
+        public static string ToCamelCase(this string camelCaseString)
+        {
+            return System.Text.RegularExpressions.Regex.Replace(camelCaseString, "([a-z](?=[A-Z])|[A-Z](?=[A-Z][a-z]))", "$1 ").Trim();
+        }
+        #endregion
+
         #region Transforms Extensions
         public static void SetX(this Transform transform, float x)
         {
