@@ -29,6 +29,41 @@ namespace FistBump.Framework.ExtensionMethods
         {
             transform.position = new Vector3(transform.position.x, transform.position.y, z);
         }
+
+        public static void SetRotationX(this Transform transform, float x)
+        {
+            transform.eulerAngles = new Vector3(x % 360, transform.eulerAngles.y, transform.eulerAngles.z);
+        }
+
+        public static void SetRotationY(this Transform transform, float y)
+        {
+            transform.eulerAngles = new Vector3(transform.eulerAngles.x, y % 360, transform.eulerAngles.z);
+        }
+
+        public static void SetRotationZ(this Transform transform, float z)
+        {
+            transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, z % 360);
+        }
+
+        public static void SetScaleX(this Transform transform, float x)
+        {
+            transform.localScale = new Vector3(x, transform.localScale.y, transform.localScale.z);
+        }
+
+        public static void SetScaleY(this Transform transform, float y)
+        {
+            transform.localScale = new Vector3(transform.localScale.x, y, transform.localScale.z);
+        }
+
+        public static void SetScaleZ(this Transform transform, float z)
+        {
+            transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y, z);
+        }
+
+        public static void SetScaleUniform(this Transform transform, float scale)
+        {
+            transform.localScale = new Vector3(scale, scale, scale);
+        }
         #endregion
 
         #region Safe Invoke Extensions
