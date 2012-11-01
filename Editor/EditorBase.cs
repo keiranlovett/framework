@@ -5,7 +5,7 @@ using FistBump.Framework.ExtensionMethods;
 using UnityEditor;
 using UnityEngine;
 
-public class FistBumpBaseEditor<T> : Editor where T : MonoBehaviour
+public class EditorBase<T> : Editor where T : MonoBehaviour
 {
     override public void OnInspectorGUI()
     {
@@ -45,11 +45,11 @@ public class FistBumpBaseEditor<T> : Editor where T : MonoBehaviour
 
                 else if (field.FieldType.IsClass)
                 {
-                    Type[] parmTypes = new Type[] { field.FieldType };
+                    var parmTypes = new[] { field.FieldType };
 
-                    string methodName = "DrawDefaultInspectors";
+                    const string methodName = "DrawDefaultInspectors";
 
-                    MethodInfo drawMethod = typeof(FistBumpBaseEditor<T>).GetMethod(methodName);
+                    MethodInfo drawMethod = typeof(EditorBase<T>).GetMethod(methodName);
 
                     if (drawMethod == null)
                     {
@@ -57,7 +57,7 @@ public class FistBumpBaseEditor<T> : Editor where T : MonoBehaviour
                     }
                     else
                     {
-                        drawMethod.MakeGenericMethod(parmTypes).Invoke(null, new object[] { MakeLabel(field), field.GetValue(target) });
+                        drawMethod.MakeGenericMethod(parmTypes).Invoke(null, new[] { MakeLabel(field), field.GetValue(target) });
                     }
                 }
                 else
@@ -72,8 +72,7 @@ public class FistBumpBaseEditor<T> : Editor where T : MonoBehaviour
 
     private static GUIContent MakeLabel(FieldInfo field)
     {
-        GUIContent guiContent = new GUIContent();
-        guiContent.text = field.Name.ToCamelCase();
+        GUIContent guiContent = new GUIContent {text = field.Name.ToCamelCase()};
         object[] descriptions = field.GetCustomAttributes(typeof(DescriptionAttribute), true);
 
         if (descriptions.Length > 0)

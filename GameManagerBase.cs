@@ -6,10 +6,12 @@ using UnityEngine;
 
 #endregion
 
-public abstract class FistBumpGame : SingletonMonoBehaviour<FistBumpGame>
+public abstract class GameManagerBase : SingletonMonoBehaviour<GameManagerBase>
 {
     public TextAsset StatDefinitions;
     public TextAsset AchievementDescriptions;
+
+    public GameObject DynamicObjects { get; private set; }
     
     public int FramesPerSec { get; private set; }
     private float m_UpdateFPSFrequency = 0.5f;
@@ -20,6 +22,8 @@ public abstract class FistBumpGame : SingletonMonoBehaviour<FistBumpGame>
     /// </summary>
     protected virtual void Awake()
     {
+        InitDynamicObjects();
+
         DontDestroyOnLoad(gameObject);
 
         if (StatDefinitions != null)
@@ -28,17 +32,18 @@ public abstract class FistBumpGame : SingletonMonoBehaviour<FistBumpGame>
         }
         else
         {
-            Debug.Log("[FistBumpGame] No stat definition file provided. You'll have to add Statistic Definition manually to use this module");
+            Debug.Log("[GameManagerBase] No stat definition file provided. You'll have to add Statistic Definition manually to use this module");
         }
 
         SocialPlatformSelector.LocalAchievementDescriptions = AchievementDescriptions;
         SocialPlatformSelector.Select();
     }
-
     protected virtual void Start()
     {
         StartCoroutine(UpdateFPS());
     }
+
+    #endregion
 
     private IEnumerator UpdateFPS()
     {
@@ -55,7 +60,14 @@ public abstract class FistBumpGame : SingletonMonoBehaviour<FistBumpGame>
             FramesPerSec = Mathf.RoundToInt(frameCount / timeSpan);
         }
     }
-    
-    #endregion
+
+    private void InitDynamicObjects()
+    {
+        DynamicObjects = GameObject.Find("Dynamic Objects");
+        if (DynamicObjects == null)
+        {
+            DynamicObjects = new GameObject("Dynamic Objects");
+        }
+    }
 }
 
