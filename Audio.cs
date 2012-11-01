@@ -54,6 +54,7 @@ namespace FistBump.Framework
             //Create an empty game object
             GameObject go = new GameObject("Audio: " + clip.name);
             go.transform.position = point;
+            go.transform.parent = GameManagerBase.Instance.DynamicObjects.transform;
 
             //Create the source
             AudioSource source = go.AddComponent<AudioSource>();
