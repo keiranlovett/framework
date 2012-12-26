@@ -1,14 +1,17 @@
 using UnityEngine;
 
-public class SelectableObject : MonoBehaviour
+namespace FistBump.Framework
 {
-    public void OnSelected()
+    public class SelectableObject : MonoBehaviour
     {
-        Debug.Log(string.Format("{0} Selected", gameObject.name));
-    }
+        public void OnSelected()
+        {
+            Debug.Log(string.Format("{0} Selected", gameObject.name));
+        }
 
-    public void OnDeselected()
-    {
-        Debug.Log(string.Format("{0} Deselected", gameObject.name));
+        public void OnDeselected()
+        {
+            Debug.Log(string.Format("{0} Deselected", gameObject.name));
+        }
     }
 }

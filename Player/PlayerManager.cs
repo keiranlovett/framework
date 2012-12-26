@@ -11,7 +11,7 @@ namespace FistBump.Framework
     /// 
     /// </summary>
     /// <remarks>FistBump.ca - Copyright (C)</remarks>
-    public class PlayerManager
+    public class PlayerManager : Singleton<PlayerManager>
     {
         #region Private Fields
 

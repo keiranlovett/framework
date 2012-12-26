@@ -5,86 +5,90 @@ using FistBump.Framework.ExtensionMethods;
 using UnityEditor;
 using UnityEngine;
 
-public class EditorBase<T> : Editor where T : MonoBehaviour
+namespace FistBump.Framework
 {
-    override public void OnInspectorGUI()
+    public class EditorBase<T> : Editor where T : MonoBehaviour
     {
-        T data = (T)target;
-
-        GUIContent label = new GUIContent {text = "Properties"};
-
-        DrawDefaultInspectors(label, data);
-
-        if (GUI.changed)
+        override public void OnInspectorGUI()
         {
-            EditorUtility.SetDirty(target);
-        }
-    }
+            T data = (T)target;
 
-    public static void DrawDefaultInspectors<R>(GUIContent label, R target) where R : MonoBehaviour
-    {
-        EditorGUILayout.Separator();
-        Type type = typeof(R);
-        FieldInfo[] fields = type.GetFields();
-        EditorGUI.indentLevel++;
+            GUIContent label = new GUIContent { text = "Properties" };
 
-        foreach (FieldInfo field in fields)
-        {
-            if (field.IsPublic)
+            DrawDefaultInspectors(label, data);
+
+            if (GUI.changed)
             {
-                if (field.FieldType == typeof(int))
+                EditorUtility.SetDirty(target);
+            }
+        }
+
+        public static void DrawDefaultInspectors<R>(GUIContent label, R target) where R : MonoBehaviour
+        {
+            EditorGUILayout.Separator();
+            Type type = typeof(R);
+            FieldInfo[] fields = type.GetFields();
+            EditorGUI.indentLevel++;
+
+            foreach (FieldInfo field in fields)
+            {
+                if (field.IsPublic)
                 {
-                    field.SetValue(target, EditorGUILayout.IntField(MakeLabel(field), (int)field.GetValue(target)));
-                }
-                else if (field.FieldType == typeof(float))
-                {
-                    field.SetValue(target, EditorGUILayout.FloatField(MakeLabel(field), (float)field.GetValue(target)));
-                }
-
-                ///etc. for other primitive types
-
-                else if (field.FieldType.IsClass)
-                {
-                    var parmTypes = new[] { field.FieldType };
-
-                    const string methodName = "DrawDefaultInspectors";
-
-                    MethodInfo drawMethod = typeof(EditorBase<T>).GetMethod(methodName);
-
-                    if (drawMethod == null)
+                    if (field.FieldType == typeof(int))
                     {
-                        Debug.LogError("No method found: " + methodName);
+                        field.SetValue(target, EditorGUILayout.IntField(MakeLabel(field), (int)field.GetValue(target)));
+                    }
+                    else if (field.FieldType == typeof(float))
+                    {
+                        field.SetValue(target, EditorGUILayout.FloatField(MakeLabel(field), (float)field.GetValue(target)));
+                    }
+
+                    ///etc. for other primitive types
+
+                    else if (field.FieldType.IsClass)
+                    {
+                        var parmTypes = new[] { field.FieldType };
+
+                        const string methodName = "DrawDefaultInspectors";
+
+                        MethodInfo drawMethod = typeof(EditorBase<T>).GetMethod(methodName);
+
+                        if (drawMethod == null)
+                        {
+                            Debug.LogError("No method found: " + methodName);
+                        }
+                        else
+                        {
+                            drawMethod.MakeGenericMethod(parmTypes).Invoke(null, new[] { MakeLabel(field), field.GetValue(target) });
+                        }
                     }
                     else
                     {
-                        drawMethod.MakeGenericMethod(parmTypes).Invoke(null, new[] { MakeLabel(field), field.GetValue(target) });
+                        Debug.LogError("DrawDefaultInspectors does not support fields of type " + field.FieldType);
                     }
                 }
-                else
+            }
+
+            EditorGUI.indentLevel--;
+        }
+
+        private static GUIContent MakeLabel(FieldInfo field)
+        {
+            GUIContent guiContent = new GUIContent { text = field.Name.ToCamelCase() };
+            object[] descriptions = field.GetCustomAttributes(typeof(DescriptionAttribute), true);
+
+            if (descriptions.Length > 0)
+            {
+                //just use the first one.
+                DescriptionAttribute description = descriptions[0] as DescriptionAttribute;
+                if (description != null)
                 {
-                    Debug.LogError("DrawDefaultInspectors does not support fields of type " + field.FieldType);
+                    guiContent.tooltip = description.Description;
                 }
             }
-        }
 
-        EditorGUI.indentLevel--;
+            return guiContent;
+        }
     }
 
-    private static GUIContent MakeLabel(FieldInfo field)
-    {
-        GUIContent guiContent = new GUIContent {text = field.Name.ToCamelCase()};
-        object[] descriptions = field.GetCustomAttributes(typeof(DescriptionAttribute), true);
-
-        if (descriptions.Length > 0)
-        {
-            //just use the first one.
-            DescriptionAttribute description = descriptions[0] as DescriptionAttribute;
-            if (description != null)
-            {
-                guiContent.tooltip = description.Description;
-            }
-        }
-
-        return guiContent;
-    }
 }

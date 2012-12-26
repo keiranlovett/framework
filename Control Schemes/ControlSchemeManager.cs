@@ -12,7 +12,7 @@ namespace FistBump.Framework
     /// 
     /// </summary>
     /// <remarks>FistBump.ca - Copyright (C)</remarks>
-    public class ControlSchemeManager
+    public class ControlSchemeManager : Singleton<ControlSchemeManager>
     {
         #region Private Fields
         

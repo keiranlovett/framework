@@ -6,68 +6,84 @@ using UnityEngine;
 
 #endregion
 
-public abstract class GameManagerBase : SingletonMonoBehaviour<GameManagerBase>
+namespace FistBump.Framework
 {
-    public TextAsset StatDefinitions;
-    public TextAsset AchievementDescriptions;
-
-    public GameObject DynamicObjects { get; private set; }
-    
-    public int FramesPerSec { get; private set; }
-    private float m_UpdateFPSFrequency = 0.5f;
-
-    #region Implementation of MonoBehaviour
-    /// <summary>
-    /// Awake is called when the script instance is being loaded.
-    /// </summary>
-    protected virtual void Awake()
+    public abstract class GameManagerBase : SingletonMonoBehaviour<GameManagerBase>
     {
-        InitDynamicObjects();
+        public TextAsset StatDefinitions;
+        public TextAsset AchievementDescriptions;
 
-        DontDestroyOnLoad(gameObject);
+        public GameObject DynamicObjects { get; private set; }
 
-        if (StatDefinitions != null)
+        public int FramesPerSec { get; private set; }
+        public int Min_FramesPerSec { get; private set; }
+        public int Max_FramesPerSec { get; private set; }
+        private float m_UpdateFPSFrequency = 0.5f;
+
+        #region Implementation of MonoBehaviour
+        /// <summary>
+        /// Awake is called when the script instance is being loaded.
+        /// </summary>
+        protected virtual void Awake()
         {
-            StatisticManager.Instance.LoadDefinitions(StatDefinitions);
+            Min_FramesPerSec = int.MaxValue;
+
+            InitDynamicObjects();
+
+            DontDestroyOnLoad(gameObject);
+
+            if (StatDefinitions != null)
+            {
+                StatisticManager.Instance.LoadDefinitions(StatDefinitions);
+            }
+            else
+            {
+                Debug.Log("[GameManagerBase] No stat definition file provided. You'll have to add Statistic Definition manually to use this module");
+            }
+
+            SocialPlatformSelector.LocalAchievementDescriptions = AchievementDescriptions;
+            SocialPlatformSelector.Select();
         }
-        else
+        protected virtual void Start()
         {
-            Debug.Log("[GameManagerBase] No stat definition file provided. You'll have to add Statistic Definition manually to use this module");
+            StartCoroutine(UpdateFPS());
         }
 
-        SocialPlatformSelector.LocalAchievementDescriptions = AchievementDescriptions;
-        SocialPlatformSelector.Select();
-    }
-    protected virtual void Start()
-    {
-        StartCoroutine(UpdateFPS());
-    }
-
-    #endregion
-
-    private IEnumerator UpdateFPS()
-    {
-        for (; ; )
+        protected virtual void OnApplicationQuit()
         {
-            // Capture frame-per-second
-            int lastFrameCount = Time.frameCount;
-            float lastTime = Time.realtimeSinceStartup;
-            yield return new WaitForSeconds(m_UpdateFPSFrequency);
-            float timeSpan = Time.realtimeSinceStartup - lastTime;
-            int frameCount = Time.frameCount - lastFrameCount;
-
-            // Display it
-            FramesPerSec = Mathf.RoundToInt(frameCount / timeSpan);
+            //Log.Dump();
+            OnDestroy();
         }
-    }
 
-    private void InitDynamicObjects()
-    {
-        DynamicObjects = GameObject.Find("Dynamic Objects");
-        if (DynamicObjects == null)
+        #endregion
+
+        private IEnumerator UpdateFPS()
         {
-            DynamicObjects = new GameObject("Dynamic Objects");
+            for (; ; )
+            {
+                // Capture frame-per-second
+                int lastFrameCount = Time.frameCount;
+                float lastTime = Time.realtimeSinceStartup;
+                yield return new WaitForSeconds(m_UpdateFPSFrequency);
+                float timeSpan = Time.realtimeSinceStartup - lastTime;
+                int frameCount = Time.frameCount - lastFrameCount;
+
+                // Display it
+                FramesPerSec = Mathf.RoundToInt(frameCount / timeSpan);
+                Min_FramesPerSec = Mathf.Min(FramesPerSec, Min_FramesPerSec);
+                Max_FramesPerSec = Mathf.Max(FramesPerSec, Max_FramesPerSec);
+                //Log.Variable("FPS", Time.realtimeSinceStartup * 1000, FramesPerSec);
+            }
+        }
+
+        private void InitDynamicObjects()
+        {
+            DynamicObjects = GameObject.Find("Dynamic Objects");
+            if (DynamicObjects == null)
+            {
+                DynamicObjects = new GameObject("Dynamic Objects");
+            }
         }
     }
+
 }
-
