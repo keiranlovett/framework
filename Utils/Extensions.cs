@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -11,6 +12,69 @@ namespace FistBump.Framework.ExtensionMethods
         public static string ToCamelCase(this string camelCaseString)
         {
             return System.Text.RegularExpressions.Regex.Replace(camelCaseString, "([a-z](?=[A-Z])|[A-Z](?=[A-Z][a-z]))", "$1 ").Trim();
+        }
+
+        public static string Base64Encode(this string source)
+        {
+            var bytes = System.Text.Encoding.UTF8.GetBytes(source);
+            return Convert.ToBase64String(bytes);
+        }
+
+        public static string Base64Decode(this string source)
+        {
+            var bytes = Convert.FromBase64String(source);
+            return System.Text.Encoding.UTF8.GetString(bytes);
+        }
+
+        public static string ComputeHash(this string value)
+        {
+            var bytes = System.Text.Encoding.UTF8.GetBytes(value);
+            var hash = System.Security.Cryptography.MD5.Create().ComputeHash(bytes);
+            var hexDigest = hash.Aggregate("", (x, y) => x + y.ToString("X").ToLower());
+            return hexDigest;
+        }
+
+        /// <summary>
+        /// Parses a string into an Enum
+        /// </summary>
+        /// <typeparam name="T">The type of the Enum</typeparam>
+        /// <param name="value">String value to parse</param>
+        /// <returns>The Enum corresponding to the stringExtensions</returns>
+        public static T ToEnum<T>(this string value)
+        {
+            return ToEnum<T>(value, false);
+        }
+
+        /// <summary>
+        /// Parses a string into an Enum
+        /// </summary>
+        /// <typeparam name="T">The type of the Enum</typeparam>
+        /// <param name="value">String value to parse</param>
+        /// <param name="ignorecase">Ignore the case of the string being parsed</param>
+        /// <returns>The Enum corresponding to the stringExtensions</returns>
+        public static T ToEnum<T>(this string value, bool ignorecase)
+        {
+            if (value == null)
+                throw new ArgumentNullException("Value");
+
+            value = value.Trim();
+
+            if (value.Length == 0)
+                throw new ArgumentNullException("Must specify valid information for parsing in the string.", "value");
+
+            Type t = typeof(T);
+            if (!t.IsEnum)
+                throw new ArgumentException("Type provided must be an Enum.", "T");
+
+            return (T)Enum.Parse(t, value, ignorecase);
+        }
+        #endregion
+
+        #region LINQ Extensions
+        public static bool In<T>(this T source, params T[] list)
+        {
+            if (null == source) throw new ArgumentNullException("source");
+            return list.Contains(source);
         }
         #endregion
 
@@ -63,6 +127,11 @@ namespace FistBump.Framework.ExtensionMethods
         public static void SetScaleUniform(this Transform transform, float scale)
         {
             transform.localScale = new Vector3(scale, scale, scale);
+        }
+
+        public static void DestroyAllChild(this Transform transform)
+        {
+            (from Transform child in transform.transform select child.gameObject).ToList().ForEach(child => Object.DestroyImmediate(child));
         }
         #endregion
 
