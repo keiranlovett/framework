@@ -46,6 +46,7 @@ namespace FistBump.Framework
         }
         protected virtual void Start()
         {
+            Messenger.Broadcast("GameLaunched");
             StartCoroutine(UpdateFPS());
         }
 
