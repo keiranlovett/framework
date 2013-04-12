@@ -204,6 +204,9 @@ namespace FistBump.Framework
 
         public static void WriteSecure<T>(string filename, T data)
         {
+#if UNITY_WEBPLAYER
+            WritePlayerPref(filename, data);
+#else
             if (s_EncryptionKey == DEFAULT_ENCRYPTION_KEY) Debug.LogWarning("[IO] WARNING: Encrypting file with default, publicly known key");
 
             FileStream writeStream = null;
@@ -236,10 +239,14 @@ namespace FistBump.Framework
                     writeStream.Close();
                 }
             }
+#endif
         }
 
         public static T ReadSecure<T>(string filename)
         {
+#if UNITY_WEBPLAYER
+            return ReadPlayerPref<T>(filename);
+#else
             T data = default(T);
             FileStream readStream = null;
             try
@@ -273,6 +280,7 @@ namespace FistBump.Framework
             }
 
             return data;
+#endif
         }
 
         #endregion
@@ -281,6 +289,10 @@ namespace FistBump.Framework
 
         public static void WriteBinary<T>(string filename, T data)
         {
+#if UNITY_WEBPLAYER
+            WritePlayerPref(filename, data);
+#else
+
             FileStream writeStream = null;
             try
             {
@@ -300,10 +312,15 @@ namespace FistBump.Framework
                     writeStream.Close();
                 }
             }
+#endif
         }
 
         public static T ReadBinary<T>(string filename)
         {
+#if UNITY_WEBPLAYER
+            return ReadPlayerPref<T>(filename);
+#else
+
             T data = default(T);
             FileStream readStream = null;
             try
@@ -326,6 +343,7 @@ namespace FistBump.Framework
             }
 
             return data;
+#endif
         }
 
         #endregion
@@ -334,6 +352,9 @@ namespace FistBump.Framework
 
         public static void WriteXML<T>(string filename, T data)
         {
+#if UNITY_WEBPLAYER
+            WritePlayerPref(filename, data);
+#else
             XmlSerializer serializer = new XmlSerializer(typeof(T));
             FileStream writeStream = null;
             try
@@ -354,10 +375,14 @@ namespace FistBump.Framework
                     writeStream.Close();
                 }
             }
+#endif
         }
 
         public static T ReadXML<T>(string filename)
         {
+#if UNITY_WEBPLAYER
+            return ReadPlayerPref<T>(filename);
+#else
             T data = default(T);
 
             XmlSerializer serializer = new XmlSerializer(typeof(T));
@@ -382,6 +407,7 @@ namespace FistBump.Framework
             }
 
             return data;
+#endif
         }
 
         #endregion
@@ -411,7 +437,7 @@ namespace FistBump.Framework
         public static T ReadPlayerPref<T>(string filename)
         {
             T data = default(T);
-            if (PlayerPrefs.HasKey(filename))
+            if (!PlayerPrefs.HasKey(filename))
                 return data;
 
             MemoryStream dataStream = null;

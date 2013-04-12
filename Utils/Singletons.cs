@@ -15,7 +15,18 @@ namespace FistBump.Framework
         /// </summary>
         public static T Instance
         {
-            get { return s_Instance ?? (s_Instance = (T) FindObjectOfType(typeof (T)) ?? CreateSingletonInstance()); }
+            get
+            {
+                if (s_Instance == null)
+                {
+                    s_Instance = FindObjectOfType(typeof (T)) as T;
+                    if (s_Instance == null)
+                    {
+                        s_Instance = CreateSingletonInstance();
+                    }
+                }
+                return s_Instance;
+            }
         }
 
         /// <summary>
@@ -54,7 +65,14 @@ namespace FistBump.Framework
         /// </summary>
         public static T Instance
         {
-            get { return s_Instance ?? (s_Instance = new T()); }
+            get
+            {
+                if(s_Instance == null)
+                {
+                    s_Instance = new T();
+                }
+                return s_Instance;
+            }
         }
 
         /// <summary>
