@@ -10,6 +10,21 @@ using UnityEngine.SocialPlatforms.Impl;
 
 namespace FistBump.Framework
 {
+    public class LocalPlatformInfo : IPlatformInfo
+    {
+        public int GetPriority() { return 9999; }//Make sure this is the last plugin to get picked
+        public bool IsPlatformSupported()
+        {
+            return true;
+        }
+        public void Initialize(TextAsset achievementDescriptions)
+        {
+            Debug.Log("[LocalPlatform] Connecting Social API to LocalPlatform");
+            Social.Active = LocalSocialPlatform.Instance;
+            LocalSocialPlatform.Instance.LoadAchievementDescriptions(achievementDescriptions);
+        }
+    }
+    
     [Serializable]
     public class LocalPlatformData
     {
@@ -19,6 +34,7 @@ namespace FistBump.Framework
         public List<Leaderboard> Leaderboards = new List<Leaderboard>();
         public List<Achievement> Achievements = new List<Achievement>();
     }
+
     public class LocalSocialPlatform : Singleton<LocalSocialPlatform>, ISocialPlatform
     {
         private static int s_MaximumLeaderboardEntry = 100;
@@ -38,6 +54,7 @@ namespace FistBump.Framework
 
         private void SaveData()
         {
+
             IO.WriteSecure<LocalPlatformData>(IO.ToPersistentDataPath("localplatform"), m_Data);
         }
         private void LoadData()
