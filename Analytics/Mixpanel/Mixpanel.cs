@@ -52,16 +52,19 @@ namespace FistBump.Framework
 
         public void Track(string @event, IDictionary<string, object> properties)
         {
+            properties["distinct_id"] = m_DistinctID;
             m_Tracker.Track(@event, properties);
         }
 
         public void Set(IDictionary<string, object> properties)
         {
+            properties["distinct_id"] = m_DistinctID;
             m_Engage.Set(m_DistinctID, properties);
         }
 
         public void Increment(IDictionary<string, object> properties)
         {
+            properties["distinct_id"] = m_DistinctID;
             m_Engage.Increment(m_DistinctID, properties);
         }
 
