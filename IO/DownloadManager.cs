@@ -22,14 +22,13 @@ namespace FistBump.Framework
         public delegate void DownloadCallback(WWW downloader);
         private static readonly Queue<Downloadable> s_Queue = new Queue<Downloadable>();
 
-        void FixedUpdate()
+        void StartNextDownload()
         {
             if (s_Queue.Count == 0 || (m_Downloader != null && m_Downloader.isDone == false))
             {
                 return;
             }
             StartCoroutine("StartDownload");
-            //StartDownload();
         }
 
         private IEnumerator OnDownload(Downloadable toDownload)
@@ -44,11 +43,13 @@ namespace FistBump.Framework
             yield return StartCoroutine("OnDownload", toDownload);
             Debug.Log("downloaded: " + toDownload.Url);
             toDownload.Callback(m_Downloader);
+            StartNextDownload();
         }
 
         public void Download(string url, DownloadCallback callback)
         {
             s_Queue.Enqueue(new Downloadable(url, callback));
+            StartNextDownload();
         }
     }
 }
