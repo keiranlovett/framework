@@ -17,25 +17,25 @@ namespace FistBump.Framework
 
     class Analytics : Singleton<Analytics>
     {
-        private IAnalyticsTracker m_Tracker;
+        private List<IAnalyticsTracker> m_Trackers = new List<IAnalyticsTracker>();
         public void Initialise(IAnalyticsConfig config)
         {
-            m_Tracker = config.Initialise();
+            m_Trackers.Add(config.Initialise());
         }
 
         public void Track(string @event, IDictionary<string, object> properties)
         {
-            m_Tracker.Track(@event, properties);
+            m_Trackers.ForEach(t => t.Track(@event, properties));
         }
 
         public void Set(IDictionary<string, object> properties)
         {
-            m_Tracker.Set(properties);
+            m_Trackers.ForEach(t => t.Set(properties));
         }
 
         public void Increment(IDictionary<string, object> properties)
         {
-            m_Tracker.Increment(properties);
+            m_Trackers.ForEach(t => t.Increment(properties));
         }
     }
 }
