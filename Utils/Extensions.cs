@@ -26,6 +26,16 @@ namespace FistBump.Framework.ExtensionMethods
             return System.Text.Encoding.UTF8.GetString(bytes);
         }
 
+        public static byte[] GetBytes(this string source)
+        {
+            return System.Text.Encoding.UTF8.GetBytes(source);
+        }
+
+        public static string GetString(this byte[] source)
+        {
+            return System.Text.Encoding.UTF8.GetString(source);
+        }
+
         public static string ComputeHash(this string value)
         {
             var bytes = System.Text.Encoding.UTF8.GetBytes(value);
