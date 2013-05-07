@@ -1,19 +1,17 @@
-/*using UnityEditor;
+using UnityEditor;
 using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Object = UnityEngine.Object;
 
 public class TexturePacker : EditorWindow
 {
-    string myString = "Hello World";
-    bool groupEnabled;
-    bool myBool = true;
-    float myFloat = 1.23f;
+    Object m_TexturePackerMetafile;
+    Object m_TexturePackerImage;
 
-    // Add menu item named "My Window" to the Window menu
     [MenuItem("Fistbump Framework/Import meshes from Texture Packer")]
-    public static void ShowWindow()
+    public static void ShowTexturePackerWindow()
     {
         //Show existing window instance. If one doesn't exist, make one.
         EditorWindow.GetWindow(typeof(TexturePacker));
@@ -26,115 +24,149 @@ public class TexturePacker : EditorWindow
         GUI.color = Color.white;
         GUILayout.Label("Select the parent in the Hierarchy View", GUILayout.MinWidth(10000f));
         GUILayout.EndHorizontal();
+        GUILayout.BeginHorizontal();
+        GUILayout.Label("Select TexturePacker metafile");
+        m_TexturePackerMetafile = EditorGUILayout.ObjectField(m_TexturePackerMetafile, typeof(TextAsset), false);
+        GUILayout.EndHorizontal();
 
         if (retVal)
         {
-            CreateMeshes();
+            if(m_TexturePackerMetafile != null)
+            {
+                Dictionary<string, UITextureInfo> test = loadTexturesFromTexturePackerJSON(m_TexturePackerMetafile.ToString());
+                foreach(KeyValuePair<string, UITextureInfo> u in test)
+                {
+                    Debug.Log(u.Key);
+                    Debug.Log(u.Value);
+                }
+            }
+            Debug.Log("yay!");
+            //CreateMeshes();
         }
     }
 
     void CreateMeshes()
     {
+        string assetPath = "Assets/test1.prefab";
+        // clone the model template
+        //Object templatePrefab = AssetDatabase.LoadAssetAtPath(assetPath, typeof(GameObject));
+        //GameObject template = (GameObject)EditorUtility.InstantiatePrefab(templatePrefab);
+
+        // this way links will persist when we regenerate the mesh
+        Object prefab = AssetDatabase.LoadAssetAtPath(assetPath, typeof(GameObject));
+        if (!prefab)
+        {
+            prefab = EditorUtility.CreateEmptyPrefab(assetPath);
+        }
         
 
-        String planeAssetName = "testMesh";
-        GameObject go = null; // (GameObject)AssetDatabase.LoadAssetAtPath("Assets/TEST/" + planeAssetName, typeof(GameObject));
-        if (go == null)
+
+        // p1       p2
+        //  *-------*
+        //  |       |
+        //  |  0,0  |
+        //  |       |
+        //  *-------*
+        // p0       p3
+
+        float size = 1;
+        float halfsize = size/2;
+
+        Vector3 p0;
+        Vector3 p1;
+        Vector3 p2;
+        Vector3 p3;
+
+        const bool faceFront = false;
+        const bool faceUp = true;
+        if(faceFront)
         {
-            Transform transform;
-            UnityEngine.Object prefab = PrefabUtility.CreateEmptyPrefab(null);
-
-
-            go = new GameObject(planeAssetName);
-            MeshFilter meshFilter = (MeshFilter)go.AddComponent(typeof(MeshFilter));
-            go.AddComponent(typeof(MeshRenderer));
-
-            Mesh mesh = new Mesh();
-
-            int widthSegments = 1;
-            int lengthSegments = 1;
-            float width = 1.0f;
-            float length = 1.0f;
-            bool addCollider = false;
-            bool createAtOrigin = true;
-            Vector2 anchorOffset = Vector2.zero;
-
-
-            int hCount2 = widthSegments + 1;
-            int vCount2 = lengthSegments + 1;
-            int numTriangles = widthSegments * lengthSegments * 6;
-            int numVertices = hCount2 * vCount2;
-
-            Vector3[] vertices = new Vector3[numVertices];
-            Vector2[] uvs = new Vector2[numVertices];
-            int[] triangles = new int[numTriangles];
-
-            int index = 0;
-            float uvFactorX = 1.0f / widthSegments;
-            float uvFactorY = 1.0f / lengthSegments;
-            float scaleX = width / widthSegments;
-            float scaleY = length / lengthSegments;
-            for (float y = 0.0f; y < vCount2; y++)
-            {
-                for (float x = 0.0f; x < hCount2; x++)
-                {
-                    if (true)// orientation == Orientation.Horizontal
-                    {
-                        vertices[index] = new Vector3(x * scaleX - width / 2f - anchorOffset.x, 0.0f, y * scaleY - length / 2f - anchorOffset.y);
-                    }
-//                     else
-//                     {
-//                         vertices[index] = new Vector3(x * scaleX - width / 2f - anchorOffset.x, y * scaleY - length / 2f - anchorOffset.y, 0.0f);
-//                     }
-                    uvs[index++] = new Vector2(x * uvFactorX, y * uvFactorY);
-                }
-            }
-
-            index = 0;
-            for (int y = 0; y < lengthSegments; y++)
-            {
-                for (int x = 0; x < widthSegments; x++)
-                {
-                    triangles[index] = (y * hCount2) + x;
-                    triangles[index + 1] = ((y + 1) * hCount2) + x;
-                    triangles[index + 2] = (y * hCount2) + x + 1;
-
-                    triangles[index + 3] = ((y + 1) * hCount2) + x;
-                    triangles[index + 4] = ((y + 1) * hCount2) + x + 1;
-                    triangles[index + 5] = (y * hCount2) + x + 1;
-                    index += 6;
-                }
-            }
-
-
-
-            mesh.vertices = vertices;
-            mesh.uv = uvs;
-            mesh.triangles = triangles;
-            mesh.RecalculateNormals();
-
-            meshFilter.sharedMesh = mesh;
-
-//             AssetDatabase.CreateAsset(go, "Assets/TEST/" + planeAssetName);
-//             AssetDatabase.SaveAssets();
-            EditorUtility.ReplacePrefab(go, prefab, ReplacePrefabOptions.ConnectToPrefab);
+            p0 = new Vector3(-halfsize, -halfsize, 0);
+            p1 = new Vector3(-halfsize, halfsize, 0);
+            p2 = new Vector3(halfsize, halfsize, 0);
+            p3 = new Vector3(halfsize, -halfsize, 0);
         }
+        else if (faceUp)
+        {
+            p0 = new Vector3(-halfsize, 0, -halfsize);
+            p1 = new Vector3(-halfsize, 0, halfsize);
+            p2 = new Vector3(halfsize, 0, halfsize);
+            p3 = new Vector3(halfsize, 0, -halfsize);    
+        }
+        float totw = 132;
+        float toth = 132;
+        int x = 66;
+        int y = 1;
+        int w = 32;
+        int h = 32;
+
+        UIUVRect test = new UIUVRect(x, y, w, h, new Vector2(totw, toth));
+
+
+        // sort of the same...
+        Mesh mesh = (Mesh)AssetDatabase.LoadAssetAtPath(assetPath, typeof(Mesh));
+        if (!mesh)
+        {
+            mesh = new Mesh();
+            mesh.name = name;
+            AssetDatabase.AddObjectToAsset(mesh, assetPath);
+        }
+        else
+        {
+            mesh.Clear();
+        }
+        // generate your mesh in place
+        
+        
+        mesh.name = "Scripted_Plane_New_Mesh";
+        mesh.vertices = new[] { p0, p1, p2, p3 };
+        mesh.uv = new[] { test.lowerLeftUV, 
+                       test.lowerLeftUV + Vector2.up * test.uvDimensions.y, 
+                       test.lowerLeftUV + test.uvDimensions, 
+                       test.lowerLeftUV + Vector2.right * test.uvDimensions.x };
+        mesh.triangles = new[] { 0, 1, 2, 0, 2, 3 };
+
+        foreach (Vector2 v in mesh.uv)
+            Debug.Log(v);
+        mesh.RecalculateNormals();
+        GameObject obj = new GameObject("New_Plane_Fom_Script");
+        obj.AddComponent<MeshRenderer>();
+        obj.AddComponent<MeshFilter>().sharedMesh = mesh;
+        obj.transform.position = new Vector3(1.45f, 0, 1.02f);
+
+        // make sure 
+        EditorUtility.ReplacePrefab(obj, prefab, ReplacePrefabOptions.ReplaceNameBased);
+
+        // get rid of the temporary object (otherwise it stays over in scene)
+        Object.DestroyImmediate(obj);
     }
 
-    public static Dictionary<string, UITextureInfo> loadTexturesFromTexturePackerJSON(string filename, Vector2 textureSize)
+    public static Dictionary<string, UITextureInfo> loadTexturesFromTexturePackerJSON(string jsonString)
     {
+        Vector2 textureSize = Vector2.zero;
         var textures = new Dictionary<string, UITextureInfo>();
 
-        var asset = AssetDatabase.LoadAssetAtPath(filename, typeof(TextAsset)) as TextAsset;
-        if (asset == null)
+        //var asset = AssetDatabase.LoadAssetAtPath(filename, typeof(TextAsset)) as TextAsset;
+        //if (asset == null)
+        //{
+        //    Debug.LogError("Could not find Texture Packer json config file in Resources folder: " + filename);
+        //}
+
+        var decodedHash = jsonString.hashtableFromJson();
+        var meta = (IDictionary)decodedHash["meta"];
+        if (meta != null)
         {
-            Debug.LogError("Could not find Texture Packer json config file in Resources folder: " + filename);
+            var size = (IDictionary)meta["size"];
+            if (size != null)
+            {
+                var textureSizeX = int.Parse(size["w"].ToString());
+                var textureSizeY = int.Parse(size["h"].ToString());
+                textureSize = new Vector2(textureSizeX, textureSizeY);
+                Debug.Log(textureSize);
+            }
         }
 
-        var jsonString = asset.text;
-        var decodedHash = jsonString.hashtableFromJson();
         var frames = (IDictionary)decodedHash["frames"];
-
         foreach (System.Collections.DictionaryEntry item in frames)
         {
             // extract the info we need from the TexturePacker json file, mainly uvRect and size
@@ -170,13 +202,14 @@ public class TexturePacker : EditorWindow
         }
 
         // unload the asset
-        asset = null;
+        //asset = null;
         Resources.UnloadUnusedAssets();
 
         return textures;
     }
 }
 
+//Taken from UIToolkit
 public struct UITextureInfo
 {
     public UIUVRect uvRect;
@@ -187,6 +220,8 @@ public struct UITextureInfo
     public bool rotated;
 }
 
+
+//Taken from UIToolkit
 public struct UIUVRect
 {
     public Vector2 lowerLeftUV;
@@ -214,4 +249,4 @@ public struct UIUVRect
         lowerLeftUV = new Vector2(x / textureSize.x, 1.0f - ((y + height) / textureSize.y));
         uvDimensions = new Vector2(width / textureSize.x, height / textureSize.y);
     }
-}*/
+}
