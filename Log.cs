@@ -23,6 +23,7 @@ namespace FistBump.Framework
 
         public static void Dump()
         {
+#if !UNITY_WEBPLAYER
             string filePath = @"test.csv";
 
 
@@ -34,6 +35,7 @@ namespace FistBump.Framework
             }
 
             File.WriteAllText(filePath, sb.ToString());
+#endif
         }
     }
 
